@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MiTubo - Cascarón</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-left">
+        <i class="fas fa-bars menu-icon"></i>
+        <a href="#" class="logo">
+          <i class="fab fa-youtube"></i>
+          <span>MiTubo</span>
+        </a>
+      </div>
+
+      <div class="header-center">
+        <form class="search-bar" action="#">
+          <input type="text" placeholder="Buscar" />
+          <button type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+        </form>
+      </div>
+
+      <div class="header-right">
+        <i class="fas fa-video"></i>
+        <i class="fas fa-bell"></i>
+        <div class="user-avatar">M</div>
+      </div>
+    </header>
+
+    <div class="main-layout">
+      <aside class="sidebar">
+        <nav>
+          <ul>
+            <li>
+              <a href="#" class="active">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-bolt"></i>
+                <span>Shorts</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-play-circle"></i>
+                <span>Suscripciones</span>
+              </a>
+            </li>
+          </ul>
+          <hr />
+          <ul>
+            <li>
+              <a href="#">
+                <i class="fas fa-folder"></i>
+                <span>Biblioteca</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-history"></i>
+                <span>Historial</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-clock"></i>
+                <span>Ver más tarde</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-thumbs-up"></i>
+                <span>Videos que me gustan</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <main class="content-area">
+        <div class="video-grid">
+          <article class="video-card">
+            <div class="video-thumbnail">
+              <span class="video-duration">12:30</span>
+            </div>
+            <div class="video-details">
+              <div class="channel-avatar"></div>
+              <div class="video-meta">
+                <h3 class="video-title">
+                  Este es el Título de un Video Muy Interesante
+                </h3>
+                <p class="video-channel-name">Nombre del Canal</p>
+                <p class="video-stats">1.2 M de vistas • hace 3 días</p>
+              </div>
+            </div>
+          </article>
+          <article class="video-card">
+            <div class="video-thumbnail">
+              <span class="video-duration">08:15</span>
+            </div>
+            <div class="video-details">
+              <div class="channel-avatar"></div>
+              <div class="video-meta">
+                <h3 class="video-title">
+                  Unboxing del Nuevo Gadget 2025 que te Sorprenderá
+                </h3>
+                <p class="video-channel-name">TechReviews</p>
+                <p class="video-stats">300K de vistas • hace 1 semana</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="video-card">
+            <div class="video-thumbnail">
+              <span class="video-duration">22:05</span>
+            </div>
+            <div class="video-details">
+              <div class="channel-avatar"></div>
+              <div class="video-meta">
+                <h3 class="video-title">Aprendiendo a Cocinar: Receta Fácil</h3>
+                <p class="video-channel-name">Cocina Rápida</p>
+                <p class="video-stats">50K de vistas • hace 12 horas</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="video-card">
+            <div class="video-thumbnail">
+              <span class="video-duration">05:42</span>
+            </div>
+            <div class="video-details">
+              <div class="channel-avatar"></div>
+              <div class="video-meta">
+                <h3 class="video-title">
+                  Tutorial de Programación: CSS Grid en 5 Minutos
+                </h3>
+                <p class="video-channel-name">DeveloperPro</p>
+                <p class="video-stats">850K de vistas • hace 1 mes</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="video-card">
+            <div class="video-thumbnail">
+              <span class="video-duration">1:15:30</span>
+            </div>
+            <div class="video-details">
+              <div class="channel-avatar"></div>
+              <div class="video-meta">
+                <h3 class="video-title">
+                  Concierto en Vivo - Música Relajante para Estudiar
+                </h3>
+                <p class="video-channel-name">MusicStream</p>
+                <p class="video-stats">4.5 M de vistas • hace 6 meses</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="video-card">
+            <div class="video-thumbnail">
+              <span class="video-duration">09:22</span>
+            </div>
+            <div class="video-details">
+              <div class="channel-avatar"></div>
+              <div class="video-meta">
+                <h3 class="video-title">El Resumen de la Semana: Noticias</h3>
+                <p class="video-channel-name">Noticias Hoy</p>
+                <p class="video-stats">95K de vistas • hace 2 horas</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
