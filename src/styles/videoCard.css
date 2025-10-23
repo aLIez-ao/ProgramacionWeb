@@ -1,0 +1,78 @@
+.video-card {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.video-thumbnail {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: #e0e0e0;
+  border-radius: 12px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+}
+.video-thumbnail::before {
+  content: "16:9";
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.video-duration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.video-details {
+  display: flex;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.channel-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: #ccc;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.video-meta {
+  display: flex;
+  flex-direction: column;
+}
+.video-title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0;
+
+    /* Limita el título a 2 líneas */
+    display: -webkit-box;
+    display: box; /* versión estándar (no todos los navegadores la soportan aún) */
+    -webkit-line-clamp: 2;
+    line-clamp: 2; /* versión estándar recomendada */
+    -webkit-box-orient: vertical;
+    box-orient: vertical; /* versión estándar */
+    overflow: hidden;
+}
+.video-channel-name,
+.video-stats {
+  font-size: 14px;
+  color: #606060;
+  line-height: 1.3;
+  margin: 4px 0 0 0;
+}
+.video-stats {
+  margin-top: 2px;
+}

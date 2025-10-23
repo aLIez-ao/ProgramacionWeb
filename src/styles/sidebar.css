@@ -1,0 +1,42 @@
+.sidebar {
+  width: 240px;
+  background-color: white;
+  padding-top: 12px;
+  position: fixed;
+  top: 60px; /* Debajo del header */
+  left: 0;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  z-index: 900;
+}
+.sidebar nav ul {
+  list-style: none;
+}
+.sidebar nav li a {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 24px;
+  color: #0f0f0f;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 10px;
+  margin: 0 12px;
+}
+.sidebar nav li a:hover {
+  background-color: #f2f2f2;
+}
+.sidebar nav li a.active {
+  background-color: #eee;
+  font-weight: bold;
+}
+.sidebar nav li a i {
+  width: 24px;
+  text-align: center;
+  font-size: 18px;
+}
+.sidebar hr {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 16px 0;
+}

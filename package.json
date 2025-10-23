@@ -1,0 +1,25 @@
+{
+  "name": "programacionweb",
+  "version": "1.0.0",
+  "description": "proyecto-youtube/\r │\r │   package.json       # Dependencias y scripts de desarrollo\r │   README.md\r │   vite.config.js     # Configuración de Vite (o del bundler que uses)\r │\r ├───node_modules/      # Dependencias (no versionar)\r │\r ├───public/            # Archivos estáticos que se copian tal cual\r │   │   favicon.ico\r │   └───images/        # Logos, íconos, miniaturas\r │       └── YouTube-Logo.png\r │\r └───src/               # Código fuente\r     │\r     │   index.html     # Punto de entrada\r     │   style.css      # Estilos globales\r     │   main.js        # JS global / inicializador\r     │\r     ├───components/    # Componentes reutilizables (UI)\r     │   │   Header.js\r     │   │   Sidebar.js\r     │   │   VideoCard.js\r     │   └── Footer.js\r     │\r     ├───pages/         # Vistas / pantallas principales\r     │   │   Home.js\r     │   │   VideoPage.js\r     │   └── SearchResults.js\r     │\r     ├───assets/        # Archivos importables (imágenes, SVGs, íconos)\r     │   └── logo-principal.svg\r     │\r     ├───services/      # Lógica para datos externos / APIs\r     │   └── api.js\r     │\r     ├───utils/         # Funciones auxiliares (formateos, helpers)\r     │   └── helpers.js\r     │\r     └───styles/        # Estilos modularizados por componente o tema\r         │   header.css\r         │   sidebar.css\r         │   videoCard.css\r         └── theme.css",
+  "main": "vite.config.js",
+  "devDependencies": {
+    "vite": "^7.1.11"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aLIez-ao/ProgramacionWeb.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aLIez-ao/ProgramacionWeb/issues"
+  },
+  "homepage": "https://github.com/aLIez-ao/ProgramacionWeb#readme"
+}
