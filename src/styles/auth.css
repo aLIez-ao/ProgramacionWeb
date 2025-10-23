@@ -1,0 +1,76 @@
+* {
+    box-sizing: border-box;
+}
+
+/* Estilo para el body de las páginas de autenticación
+  Centra el contenido vertical y horizontalmente.
+*/
+.auth-body { 
+    font-family: Arial, sans-serif; 
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center; 
+    min-height: 100vh; 
+    background-color: #f9f9f9; 
+    margin: 0;
+}
+
+.header-logo {
+    width: 120px; 
+    margin-bottom: 20px; 
+}
+
+/* Caja genérica para formularios de 'login' y 'signup'
+*/
+.auth-box { 
+    padding: 40px; 
+    background: white; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    text-align: center; 
+    width: 380px; 
+}
+
+.auth-box h1 { 
+    margin-bottom: 20px; 
+    font-size: 24px;
+}
+
+/* Estilo para el párrafo <p> que está en login */
+.auth-box > p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+.auth-box input { 
+    display: block; 
+    width: 100%; 
+    padding: 12px; 
+    margin-bottom: 15px; 
+    font-size: 16px; 
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+}
+
+.auth-box button { 
+    width: 100%; 
+    padding: 12px; 
+    background-color: #065fd4; 
+    color: white; 
+    border: none; 
+    border-radius: 4px; 
+    font-size: 16px; 
+    cursor: pointer; 
+}
+
+.form-link { 
+    margin-top: 20px; 
+    font-size: 14px; 
+}
+
+.form-link a { 
+    color: #065fd4; 
+    text-decoration: none; 
+}

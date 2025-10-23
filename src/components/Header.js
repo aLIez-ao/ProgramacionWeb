@@ -24,7 +24,7 @@ export function Header() {
     </div>
     
     <div class="header-right auth-section">
-        <a href="/login.html" class="auth-button">
+        <a href="/views/login.html" class="auth-button">
             <i class="fas fa-user-circle"></i>
             <span>Acceder</span>
         </a>
