@@ -58,24 +58,29 @@
   cursor: pointer;
 }
 
-.header-right {
+.header-right.auth-section {
   display: flex;
   align-items: center;
-  gap: 24px;
-  font-size: 20px;
 }
-.header-right i {
+
+.auth-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid #ddd; /* Borde sutil */
+  color: #065fd4; /* Azul de Google/YouTube */
+  border-radius: 40px;
+  font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
 }
-.user-avatar {
-  width: 32px;
-  height: 32px;
-  background-color: #005b9a;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 14px;
+
+.auth-button:hover {
+  background-color: #f2f8ff; /* Azul muy claro al pasar el ratón */
+  border-color: #cce0ff;
+}
+
+.auth-button i {
+  font-size: 20px;
 }
