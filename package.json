@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/aLIez-ao/ProgramacionWeb/issues"
   },
-  "homepage": "https://github.com/aLIez-ao/ProgramacionWeb#readme"
+  "homepage": "https://github.com/aLIez-ao/ProgramacionWeb#readme",
+  "dependencies": {
+    "firebase": "^12.4.0"
+  }
 }

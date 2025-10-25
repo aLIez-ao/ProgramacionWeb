@@ -4,6 +4,7 @@ import path from "path";
 export default defineConfig({
   root: "src", // Carpeta raíz
   base: "./", // Para que los paths de build funcionen correctamente
+  envDir: path.resolve(__dirname),
   server: {
     port: 3000, // Cambiar puerto por defecto si quieres
     open: true, // Abre el navegador automáticamente
