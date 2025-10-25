@@ -23,5 +23,5 @@ try {
 }
 
 export { app, analytics };
-// export const db = getFirestore(app);
-// export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const auth = getAuth(app);
