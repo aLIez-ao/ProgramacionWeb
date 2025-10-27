@@ -1,0 +1,127 @@
+/* src/styles/videoPage.css */
+
+.watch-layout {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+}
+
+.primary-column {
+  flex: 3; /* Ocupa 3/4 del espacio */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.secondary-column {
+  flex: 1; /* Ocupa 1/4 del espacio */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.video-player-placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: #000;
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 12px;
+}
+
+.video-info .video-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.video-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.channel-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.channel-avatar-lg {
+  width: 48px;
+  height: 48px;
+  background-color: #ccc;
+  border-radius: 50%;
+}
+
+.channel-meta {
+  display: flex;
+  flex-direction: column;
+}
+.channel-meta .channel-name {
+  font-weight: 600;
+}
+.channel-meta .channel-subs {
+  font-size: 12px;
+  color: #606060;
+}
+
+.subscribe-button {
+  background-color: #0f0f0f;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 16px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+.action-buttons button {
+  background-color: #f2f2f2;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.action-buttons button:hover {
+  background-color: #e5e5e5;
+}
+
+.comments-section {
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+/* En la columna secundaria, cambiamos el estilo de las tarjetas */
+.secondary-column .video-card {
+  flex-direction: row;
+  gap: 10px;
+}
+.secondary-column .video-card .video-thumbnail {
+  flex: 1; /* El thumbnail ocupa 1 parte */
+}
+.secondary-column .video-card .video-details {
+  flex: 1.5; /* El texto ocupa 1.5 partes */
+  padding: 0;
+}
+.secondary-column .video-card .channel-avatar {
+  display: none; /* Ocultamos el avatar en la lista relacionada */
+}
+.secondary-column .video-card .video-title {
+  font-size: 14px;
+}
+.secondary-column .video-card .video-stats {
+  font-size: 12px;
+}
