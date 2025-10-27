@@ -1,48 +1,171 @@
-* {
+/* ==============================
+   SIDEBAR PRINCIPAL
+   ============================== */
+.sidebar {
+  width: 240px;
+  background-color: white;
+  padding-top: 12px;
+  position: fixed;
+  top: 60px;
+  left: 0;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  z-index: 2000; /* Flota sobre todo */
+  transition: transform 0.2s ease-in-out, width 0.2s ease-in-out;
+  transform: translateX(0);
+}
+
+/* ==============================
+   LISTAS DE NAVEGACIÓN
+   ============================== */
+.sidebar nav ul {
+  list-style: none;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8fafc;
-  color: #1f2937;
-  height: 100vh;
+.sidebar nav li a {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 20px;
+  padding: 10px 24px;
+  color: #0f0f0f;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 10px;
+  margin: 0 12px;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, margin 0.2s ease;
 }
 
-.container {
+.sidebar nav li a:hover {
+  background-color: #f2f2f2;
+}
+
+.sidebar nav li a.active {
+  background-color: #eee;
+  font-weight: bold;
+}
+
+.sidebar nav li a i {
+  width: 24px;
   text-align: center;
-  padding: 2rem;
-  border: 2px dashed #9ca3af;
-  border-radius: 16px;
-  background: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  max-width: 400px;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
-.emoji {
-  font-size: 4rem;
-  margin-bottom: 1rem;
+.sidebar nav li a span {
+  opacity: 1;
+  transition: opacity 0.1s ease-in-out;
 }
 
-h1 {
-  font-size: 1.8rem;
-  color: #ef4444;
-  margin-bottom: 0.5rem;
+.sidebar hr {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 16px 0;
+  transition: margin 0.2s ease-in-out;
 }
 
-p {
-  font-size: 1rem;
-  color: #4b5563;
+/* ==============================
+   ESTADO MINIMIZADO
+   ============================== */
+body.sidebar-minimized .sidebar {
+  width: 72px;
 }
 
-.footer {
-  margin-top: 2rem;
-  font-size: 0.9rem;
-  color: #9ca3af;
+body.sidebar-minimized .sidebar nav li a {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 0;
+  gap: 6px;
+  margin: 0;
+  border-radius: 0;
+}
+
+body.sidebar-minimized .sidebar nav li a span {
+  font-size: 10px;
+  opacity: 1;
+  width: auto;
+  overflow: visible;
+}
+
+body.sidebar-minimized .sidebar nav li a i {
+  width: auto;
+  font-size: 20px;
+}
+
+body.sidebar-minimized .sidebar nav li a:hover,
+body.sidebar-minimized .sidebar nav li a.active {
+  border-radius: 10px;
+  margin: 0 4px;
+}
+
+body.sidebar-minimized .sidebar hr {
+  margin: 16px 8px;
+}
+
+/* Texto largo/corto */
+.sidebar nav li a .text-mini {
+  display: none;
+}
+
+body.sidebar-minimized .sidebar nav li a .text-full {
+  display: none;
+}
+
+body.sidebar-minimized .sidebar nav li a .text-mini {
+  display: inline;
+}
+
+/* ==============================
+   MODOS OVERLAY / VIDEO PAGE
+   ============================== */
+body.page-watch .sidebar {
+  transform: translateX(-100%);
+}
+
+body.sidebar-open-overlay .sidebar {
+  transform: translateX(0);
+  top: 0;
+  height: 100vh;
+}
+
+/* ==============================
+   CABECERA INTERNA DE SIDEBAR
+   ============================== */
+.sidebar-header {
+  display: none;
+  align-items: center;
+  gap: 20px;
+  padding: 0 24px;
+  height: 60px;
+}
+
+.sidebar-header .menu-icon {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.sidebar-header .logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: red;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sidebar-header .logo i {
+  font-size: 26px;
+}
+
+/* Mostrar cabecera interna cuando overlay está activo */
+body.sidebar-open-overlay .sidebar .sidebar-header {
+  display: flex;
+}
+
+/* Ajuste del padding del nav en overlay */
+body.sidebar-open-overlay .sidebar nav {
+  padding-top: 12px;
 }

@@ -1,6 +1,8 @@
-/* --- Estilos Normales de la Sidebar --- */
+/* ==============================
+   SIDEBAR PRINCIPAL
+   ============================== */
 .sidebar {
-  width: 240px; /* Ancho normal */
+  width: 240px;
   background-color: white;
   padding-top: 12px;
   position: fixed;
@@ -8,27 +10,33 @@
   left: 0;
   height: calc(100vh - 60px);
   overflow-y: auto;
-  z-index: 900;
-  transition: width 0.2s ease-in-out; /* Transición suave */
+  z-index: 2000; /* Flota sobre todo */
+  transition: transform 0.2s ease-in-out, width 0.2s ease-in-out;
+  transform: translateX(0);
 }
 
+/* ==============================
+   LISTAS DE NAVEGACIÓN
+   ============================== */
 .sidebar nav ul {
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .sidebar nav li a {
   display: flex;
   align-items: center;
-  gap: 20px; /* Espacio entre icono y texto */
+  gap: 20px;
   padding: 10px 24px;
   color: #0f0f0f;
   font-size: 14px;
   font-weight: 500;
   border-radius: 10px;
   margin: 0 12px;
-  white-space: nowrap; /* Evita que el texto salte de línea */
+  white-space: nowrap;
+  transition: background-color 0.2s ease, margin 0.2s ease;
 }
-
 .sidebar nav li a:hover {
   background-color: #f2f2f2;
 }
@@ -42,7 +50,7 @@
   width: 24px;
   text-align: center;
   font-size: 18px;
-  flex-shrink: 0; /* Evita que el icono se encoja */
+  flex-shrink: 0;
 }
 
 .sidebar nav li a span {
@@ -57,47 +65,36 @@
   transition: margin 0.2s ease-in-out;
 }
 
-
-/* --- Estilos para la Sidebar Minimizada --- */
-
-/* 1. ESTADO MINIMIZADO: Cuando body.sidebar-minimized está activo */
+/* ==============================
+   ESTADO MINIMIZADO
+   ============================== */
 body.sidebar-minimized .sidebar {
-  width: 72px; /* Ancho solo para los iconos */
+  width: 72px;
 }
 
-/* 2. CAMBIO DE LAYOUT EN EL ENLACE (Botón) */
 body.sidebar-minimized .sidebar nav li a {
-  flex-direction: column; /* Apila icono y texto verticalmente */
-  justify-content: center; /* Centra todo verticalmente */
-  align-items: center; /* Centra todo horizontalmente */
-  padding: 14px 0; /* Padding vertical, sin padding horizontal */
-  gap: 6px; /* Espacio pequeño entre icono y texto */
-  margin: 0; /* Sin margen */
-  border-radius: 0; /* Sin bordes redondeados en el botón */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 0;
+  gap: 6px;
+  margin: 0;
+  border-radius: 0;
 }
 
-/* 3. CAMBIO DE ESTILO DEL TEXTO (span) */
 body.sidebar-minimized .sidebar nav li a span {
-  font-size: 10px; /* Texto más pequeño */
-  opacity: 1; /* El texto SÍ se muestra */
-  width: auto; /* Ancho automático */
-  overflow: visible; /* Asegura que se vea */
+  font-size: 10px;
+  opacity: 1;
+  width: auto;
+  overflow: visible;
 }
 
-/* 4. CAMBIO DE ESTILO DEL ICONO (i) */
 body.sidebar-minimized .sidebar nav li a i {
-  width: auto; /* Ancho automático */
-  font-size: 20px; /* Icono un poco más grande */
+  width: auto;
+  font-size: 20px;
 }
-
-body.sidebar-minimized .sidebar nav li a:hover {
-  background-color: #f2f2f2;
-  border-radius: 10px; /* Añade borde redondeado SOLO en hover */
-  margin: 0 4px; /* Margen para que el hover no toque los bordes */
-}
-
+body.sidebar-minimized .sidebar nav li a:hover,
 body.sidebar-minimized .sidebar nav li a.active {
-  background-color: #eee;
   border-radius: 10px;
   margin: 0 4px;
 }
@@ -106,65 +103,48 @@ body.sidebar-minimized .sidebar hr {
   margin: 16px 8px;
 }
 
-/* --- Lógica para texto largo/corto --- */
-
-/* 1. Por defecto:
-   - Ocultamos el texto corto (.text-mini)
-*/
+/* Texto largo/corto */
 .sidebar nav li a .text-mini {
   display: none;
 }
 
-/* 2. Cuando está minimizada:
-   - Ocultamos el texto largo (.text-full)
-   - Mostramos el texto corto (.text-mini)
-*/
 body.sidebar-minimized .sidebar nav li a .text-full {
   display: none;
 }
+
 body.sidebar-minimized .sidebar nav li a .text-mini {
-  display: inline; /* 'inline' funciona bien con el estilo de 10px */
+  display: inline;
 }
 
-/* ... (todos tus estilos anteriores de .sidebar y .sidebar-minimized) ... */
-
-/* --- Nuevos Estilos para Modo "Overlay" (Video Page) --- */
-
-/* 1. Hacemos que la sidebar flote y tenga transiciones */
-.sidebar {
-  /* ... (tus estilos existentes) ... */
-  z-index: 2000; /* ¡MUY IMPORTANTE! Para que flote sobre todo */
-  transform: translateX(0); /* Posición por defecto */
-  transition: transform 0.2s ease-in-out, width 0.2s ease-in-out;
-}
-
-/* 2. En la página de video (page-watch), la ocultamos por defecto */
+/* ==============================
+   MODOS OVERLAY / VIDEO PAGE
+   ============================== */
 body.page-watch .sidebar {
-  transform: translateX(-100%); /* Mueve la barra fuera de la pantalla */
+  transform: translateX(-100%);
 }
 
-/* 3. Cuando el overlay está activo, la mostramos */
 body.sidebar-open-overlay .sidebar {
-  transform: translateX(0); /* La trae de vuelta a la pantalla */
+  transform: translateX(0);
+  top: 0;
+  height: 100vh;
 }
 
-/* ... (todos tus estilos anteriores para .sidebar, .sidebar-minimized, etc.) ... */
-
-/* --- 1. Estilos para la NUEVA cabecera de la sidebar --- */
+/* ==============================
+   CABECERA INTERNA DE SIDEBAR
+   ============================== */
 .sidebar-header {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 20px;
   padding: 0 24px;
-  height: 60px; /* Misma altura que el header principal */
-  
-  /* Por defecto, está oculta */
-  display: none; 
+  height: 60px;
 }
+
 .sidebar-header .menu-icon {
   font-size: 20px;
   cursor: pointer;
 }
+
 .sidebar-header .logo {
   font-size: 22px;
   font-weight: bold;
@@ -173,29 +153,17 @@ body.sidebar-open-overlay .sidebar {
   align-items: center;
   gap: 5px;
 }
+
 .sidebar-header .logo i {
   font-size: 26px;
 }
 
-
-/* --- 2. Lógica para el modo Overlay (Página de Video) --- */
-
-/* Cuando estamos en la página de video, la sidebar
-   (y cuando se abre el overlay) ocupa la altura TOTAL */
-body.sidebar-open-overlay .sidebar,
-body.page-watch .sidebar {
-  top: 0;
-  height: 100vh;
+/* Mostrar cabecera interna cuando overlay está activo */
+body.sidebar-open-overlay .sidebar .sidebar-header {
+  display: flex;
 }
 
-/* Cuando el overlay se abre: */
-body.sidebar-open-overlay .sidebar {
-  /* Mostramos la cabecera interna */
-  .sidebar-header {
-    display: flex;
-  }
-  /* Ajustamos el padding de la navegación */
-  nav {
-    padding-top: 12px;
-  }
+/* Ajuste del padding del nav en overlay */
+body.sidebar-open-overlay .sidebar nav {
+  padding-top: 12px;
 }
