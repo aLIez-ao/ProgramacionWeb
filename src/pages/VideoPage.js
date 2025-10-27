@@ -1,8 +1,8 @@
 // Importamos los datos de ejemplo para encontrar el video
-import { mockVideos } from "./Home.js";
 // Importamos el VideoCard para los videos relacionados
-import { VideoCard } from "../components/VideoCard.js";
 // Importamos los estilos para esta página (¡los crearemos en el paso 4!)
+import { mockVideos } from "./Home.js";
+import { VideoCard } from "../components/VideoCard.js";
 import "../styles/videoPage.css";
 
 export function VideoPage() {

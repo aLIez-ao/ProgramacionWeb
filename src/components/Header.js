@@ -4,6 +4,7 @@ import "../styles/header.css";
 // Importar herramientas de Firebase
 import { auth } from "../services/firebaseConfig.js";
 import { signOut } from "firebase/auth";
+import { toggleSidebar } from "../utils/sidebarToggle.js";
 
 // Obtenemos la variable de entorno
 const siteName = import.meta.env.SITE_NAME;
@@ -12,7 +13,7 @@ export function Header(user) {
   const headerEl = document.createElement("header");
   headerEl.classList.add("header");
 
-  // Lógica para HTML de autenticación (sin cambios)
+  // --- HTML de autenticación ---
   let authHtml;
   if (user) {
     const userInitial = user.email.charAt(0).toUpperCase();
@@ -41,10 +42,12 @@ export function Header(user) {
     `;
   }
 
-  // Plantilla HTML
+  // --- Plantilla HTML ---
   headerEl.innerHTML = `
     <div class="header-left">
-        <i class="fas fa-bars menu-icon"></i> <a href="/" class="logo"> <i class="fab fa-youtube"></i>
+        <i class="fas fa-bars menu-icon"></i>
+        <a href="/" class="logo">
+            <i class="fab fa-youtube"></i>
             <span>${siteName}</span>
         </a>
     </div>
@@ -63,7 +66,7 @@ export function Header(user) {
     </div>
   `;
 
-  // --- LÓGICA DE JAVASCRIPT ---
+  // --- Lógica de usuario ---
 
   //  Lógica del menú desplegable
   if (user) {
@@ -81,10 +84,10 @@ export function Header(user) {
     });
   }
 
-  // Lógica para minimizar la barra lateral
+  // --- Lógica de barra lateral (centralizada) ---
   const menuIcon = headerEl.querySelector(".menu-icon");
   menuIcon.addEventListener("click", () => {
-    document.body.classList.toggle("sidebar-minimized");
+    toggleSidebar(); // Toda la lógica de overlay o minimización ahora está en toggleSidebar()
   });
 
   return headerEl;

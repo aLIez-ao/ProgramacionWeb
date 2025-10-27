@@ -23,23 +23,51 @@ a {
 /* --- Estructura Principal --- */
 .main-layout {
   display: flex;
-  /* Altura total menos la cabecera (que es 60px) */
-  height: calc(100vh - 60px);
+  /* ¡CAMBIO! El layout principal ahora está debajo del header */
+  margin-top: 60px;
 }
 
 .content-area {
   flex-grow: 1;
-  /* Dejamos espacio para la sidebar fija de 240px */
-  margin-left: 240px;
   padding: 24px;
-  overflow-y: auto; /* Permite scroll solo en esta área */
+  overflow-y: auto;
   transition: margin-left 0.2s ease-in-out;
+  
+  /* ¡BORRADO! Quitamos el margin-left: 240px; por defecto */
 }
 
-body.sidebar-minimized .content-area {
-  margin-left: 72px; /* Ancho de la sidebar minimizada */
+/* 1. Definimos el margen solo para la página de Home */
+body.page-home .content-area {
+  margin-left: 240px;
 }
 
+/* 2. Definimos el margen para Home minimizado */
+body.page-home.sidebar-minimized .content-area {
+  margin-left: 72px;
+}
+
+/* 3. En la página de video, no hay margen */
+body.page-watch .content-area {
+  margin-left: 0;
+  /* ¡CAMBIO! Hacemos el padding más pequeño en la página de video */
+  padding: 0 24px 24px 24px;
+}
+
+/* 4. ¡NUEVO! Estilos para el fondo oscuro (Overlay) */
+.page-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Color negro semitransparente */
+  z-index: 1999; /* Justo debajo de la sidebar */
+}
+
+body.sidebar-open-overlay .page-overlay {
+  display: block; /* Lo mostramos cuando la clase está activa */
+}
 /* --- Rejilla de Videos (Pertenece a la página de Inicio) --- */
 .video-grid {
   display: grid;

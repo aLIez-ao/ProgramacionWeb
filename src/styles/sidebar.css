@@ -125,3 +125,77 @@ body.sidebar-minimized .sidebar nav li a .text-full {
 body.sidebar-minimized .sidebar nav li a .text-mini {
   display: inline; /* 'inline' funciona bien con el estilo de 10px */
 }
+
+/* ... (todos tus estilos anteriores de .sidebar y .sidebar-minimized) ... */
+
+/* --- Nuevos Estilos para Modo "Overlay" (Video Page) --- */
+
+/* 1. Hacemos que la sidebar flote y tenga transiciones */
+.sidebar {
+  /* ... (tus estilos existentes) ... */
+  z-index: 2000; /* ¡MUY IMPORTANTE! Para que flote sobre todo */
+  transform: translateX(0); /* Posición por defecto */
+  transition: transform 0.2s ease-in-out, width 0.2s ease-in-out;
+}
+
+/* 2. En la página de video (page-watch), la ocultamos por defecto */
+body.page-watch .sidebar {
+  transform: translateX(-100%); /* Mueve la barra fuera de la pantalla */
+}
+
+/* 3. Cuando el overlay está activo, la mostramos */
+body.sidebar-open-overlay .sidebar {
+  transform: translateX(0); /* La trae de vuelta a la pantalla */
+}
+
+/* ... (todos tus estilos anteriores para .sidebar, .sidebar-minimized, etc.) ... */
+
+/* --- 1. Estilos para la NUEVA cabecera de la sidebar --- */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 24px;
+  height: 60px; /* Misma altura que el header principal */
+  
+  /* Por defecto, está oculta */
+  display: none; 
+}
+.sidebar-header .menu-icon {
+  font-size: 20px;
+  cursor: pointer;
+}
+.sidebar-header .logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: red;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sidebar-header .logo i {
+  font-size: 26px;
+}
+
+
+/* --- 2. Lógica para el modo Overlay (Página de Video) --- */
+
+/* Cuando estamos en la página de video, la sidebar
+   (y cuando se abre el overlay) ocupa la altura TOTAL */
+body.sidebar-open-overlay .sidebar,
+body.page-watch .sidebar {
+  top: 0;
+  height: 100vh;
+}
+
+/* Cuando el overlay se abre: */
+body.sidebar-open-overlay .sidebar {
+  /* Mostramos la cabecera interna */
+  .sidebar-header {
+    display: flex;
+  }
+  /* Ajustamos el padding de la navegación */
+  nav {
+    padding-top: 12px;
+  }
+}

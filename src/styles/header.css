@@ -1,3 +1,6 @@
+/* ==============================
+   HEADER PRINCIPAL
+   ============================== */
 .header {
   display: flex;
   justify-content: space-between;
@@ -17,32 +20,37 @@
   align-items: center;
   gap: 20px;
 }
+
 .header-left .menu-icon {
   font-size: 20px;
   cursor: pointer;
 }
+
 .logo {
-  font-size: 22px;
-  font-weight: bold;
-  color: red;
   display: flex;
   align-items: center;
   gap: 5px;
+  font-size: 22px;
+  font-weight: bold;
+  color: red;
 }
+
 .logo i {
   font-size: 26px;
 }
 
-/* --- HEADER CENTER --- */
+/* --- HEADER CENTER / SEARCH BAR --- */
 .header-center {
   display: flex;
   flex: 0 1 720px;
   margin: 0 40px;
 }
+
 .search-bar {
   display: flex;
   width: 100%;
 }
+
 .search-bar input {
   flex-grow: 1;
   padding: 10px 15px;
@@ -51,6 +59,7 @@
   border-radius: 40px 0 0 40px;
   min-width: 50px;
 }
+
 .search-bar button {
   padding: 0 24px;
   border: 1px solid #ccc;
@@ -64,21 +73,23 @@
 .header-right.auth-section {
   display: flex;
   align-items: center;
-  gap: 16px; /* Más espacio entre iconos */
+  gap: 16px;
 }
 
-/* Efecto hover para los íconos */
 .header-right.auth-section > i {
   font-size: 20px;
   cursor: pointer;
-  padding: 10px; /* Área de clic más grande */
-  border-radius: 50%; /* Fondo circular */
-}
-.header-right.auth-section > i:hover {
-  background-color: #f2f2f2; /* Color de fondo en hover */
+  padding: 10px;
+  border-radius: 50%;
 }
 
-/* --- MENÚ DESPLEGABLE DE USUARIO --- */
+.header-right.auth-section > i:hover {
+  background-color: #f2f2f2;
+}
+
+/* ==============================
+   MENÚ DESPLEGABLE DE USUARIO
+   ============================== */
 
 /* Contenedor principal */
 .user-menu-container {
@@ -90,7 +101,7 @@
 /* Avatar de usuario */
 .user-avatar {
   cursor: pointer;
-  margin-left: 16px; /* Espacio antes del avatar */
+  margin-left: 16px;
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -104,8 +115,9 @@
   font-size: 16px;
   transition: background-color 0.2s ease;
 }
+
 .user-avatar:hover {
-  background-color: #054cbf;  /* Color de fondo en hover */
+  background-color: #054cbf;
 }
 
 /* Dropdown oculto por defecto */
@@ -123,7 +135,7 @@
   overflow: hidden;
 }
 
-/* Clase "show" para mostrarlo (JS la añade) */
+/* Mostrar dropdown */
 .user-dropdown.show {
   display: block;
 }
@@ -133,6 +145,7 @@
   padding: 12px 16px;
   border-bottom: 1px solid #eee;
 }
+
 .dropdown-header-email {
   font-weight: 500;
   font-size: 14px;
@@ -151,15 +164,19 @@
   cursor: pointer;
   font-size: 14px;
 }
+
 #dropdown-logout-button:hover {
   background-color: #f2f2f2;
 }
+
 #dropdown-logout-button i {
   font-size: 16px;
   width: 20px;
 }
 
-/* --- BOTÓN DE ACCEDER --- */
+/* ==============================
+   BOTÓN DE ACCEDER
+   ============================== */
 .auth-button {
   display: flex;
   align-items: center;
@@ -172,10 +189,21 @@
   font-size: 14px;
   cursor: pointer;
 }
+
 .auth-button:hover {
   background-color: #f2f8ff;
   border-color: #cce0ff;
 }
+
 .auth-button i {
   font-size: 20px;
 }
+
+/* ==============================
+   ESTADO DEL HEADER SEGÚN SIDEBAR
+   ============================== */
+body.sidebar-open-overlay .header .menu-icon {
+  visibility: hidden;
+}
+
+
