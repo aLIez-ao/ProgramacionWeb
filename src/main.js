@@ -1,22 +1,27 @@
-// 1. Importar el estilo global
+// Importar el estilo global
 import "./style.css";
 
-// 2. Importar los componentes principales de la UI
+// Importar los componentes principales de la UI
 import { Header } from "./components/Header.js";
 import { Sidebar } from "./components/Sidebar.js";
 
-// 3. Importar la página que queremos mostrar
+// Importar la página que queremos mostrar
 import { HomePage } from "./pages/Home.js";
 
-// 4. Función para "renderizar" la aplicación
-function renderApp() {
-  // Obtenemos el punto de anclaje del index.html
+// Importar herramientas de Firebase
+import { auth } from "./services/firebaseConfig.js";
+import { onAuthStateChanged } from "firebase/auth";
+
+// Modificar la función 'renderApp' para que Acepte un 'user'
+function renderApp(user) {
   const appElement = document.getElementById("app");
   if (!appElement) return; // Salir si no se encuentra el div
 
-  // 5. Crear la estructura base
-  // (Header va primero, luego el layout principal)
-  const header = Header();
+  // Limpiamos el HTML para evitar duplicados si el estado cambia
+  appElement.innerHTML = "";
+
+  //  el 'user' (o 'null') al Header
+  const header = Header(user);
   appElement.appendChild(header);
 
   const mainLayout = document.createElement("div");
@@ -25,11 +30,9 @@ function renderApp() {
   const sidebar = Sidebar();
   mainLayout.appendChild(sidebar);
 
-  // El 'content-area' albergará el contenido de nuestras páginas
   const contentArea = document.createElement("main");
   contentArea.classList.add("content-area");
 
-  // 6. Renderizar la página de inicio
   const homePageContent = HomePage();
   contentArea.appendChild(homePageContent);
 
@@ -37,5 +40,15 @@ function renderApp() {
   appElement.appendChild(mainLayout);
 }
 
-// 7. Ejecutar la aplicación
-renderApp();
+// onAuthStateChanged decide ejecutar renderApp()
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // Usuario está CONECTADO
+    console.log("Usuario conectado:", user.email);
+    renderApp(user); // Dibujamos la app en modo "conectado"
+  } else {
+    // Usuario está DESCONECTADO
+    console.log("No hay usuario conectado.");
+    renderApp(null); // Dibujamos la app en modo "desconectado"
+  }
+});
