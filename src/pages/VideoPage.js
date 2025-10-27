@@ -1,12 +1,13 @@
-// Importamos los datos de ejemplo para encontrar el video
-// Importamos el VideoCard para los videos relacionados
-// Importamos los estilos para esta página (¡los crearemos en el paso 4!)
+// 1. IMPORTACIONES
 import { mockVideos } from "./Home.js";
 import { VideoCard } from "../components/VideoCard.js";
+import { VideoPageTemplate } from "./VideoPage.template.js";
 import "../styles/videoPage.css";
 
 export function VideoPage() {
-  // 1. Leer el ID del video desde la URL (ej. /watch?v=abc12345)
+  // --- LÓGICA (El "Controlador") ---
+
+  // 1. Leer el ID del video desde la URL
   const params = new URLSearchParams(window.location.search);
   const videoId = params.get("v");
 
@@ -17,58 +18,28 @@ export function VideoPage() {
   const pageContainer = document.createElement("div");
   pageContainer.classList.add("watch-layout");
 
-  // Si no se encuentra el video, mostrar un error
+  // 4. Manejar "Video no encontrado"
   if (!videoData) {
     pageContainer.innerHTML = "<h1>Video no encontrado (404)</h1>";
     return pageContainer;
   }
 
-  // 4. Si se encuentra el video, construir el HTML
-  pageContainer.innerHTML = `
-    <div class="primary-column">
-      
-      <div class="video-player-placeholder">
-        <span>Reproductor de video (16:9)</span>
-      </div>
+  // --- VISTA (Llamada a la Plantilla) ---
 
-      <div class="video-info">
-        <h1 class="video-title">${videoData.title}</h1>
-        <div class="video-actions">
-          <div class="channel-info">
-            <div class="channel-avatar-lg"></div>
-            <div class="channel-meta">
-              <span class="channel-name">${videoData.channel}</span>
-              <span class="channel-subs">1.2M suscriptores</span>
-            </div>
-            <button class="subscribe-button">Suscribirse</button>
-          </div>
-          <div class="action-buttons">
-            <button><i class="fas fa-thumbs-up"></i> 15K</button>
-            <button><i class="fas fa-thumbs-down"></i></button>
-            <button><i class="fas fa-share"></i> Compartir</button>
-            <button><i class="fas fa-ellipsis-h"></i> Más</button>
-          </div>
-        </div>
-      </div>
+  // 5. Construir el HTML llamando a la plantilla
+  pageContainer.innerHTML = VideoPageTemplate(videoData);
 
-      <div class="comments-section">
-        <h2>Comentarios</h2>
-        <p>Los comentarios se cargarían aquí...</p>
-      </div>
+  // --- LÓGICA (Post-Renderizado) ---
 
-    </div>
-
-    <div class="secondary-column">
-      <h2>Videos relacionados</h2>
-    </div>
-  `;
-
-  // 5. Añadir los videos relacionados (simulados)
+  // 6. Añadir los videos relacionados (simulados)
+  // Buscamos el contenedor que la plantilla acaba de crear
   const relatedVideosList = pageContainer.querySelector(".secondary-column");
-  // Simplemente mostramos los 3 primeros videos de la lista como "relacionados"
+
+  // Llenamos el contenedor
   mockVideos.slice(0, 3).forEach((video) => {
     relatedVideosList.appendChild(VideoCard(video));
   });
 
+  // 7. Devolver la página completa
   return pageContainer;
 }
