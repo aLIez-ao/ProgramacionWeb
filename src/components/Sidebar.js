@@ -48,8 +48,9 @@ export function Sidebar() {
             </li>
             <li>
                 <a href="#">
-                    <i class="fas fa-thumbs-up"></i>
-                    <span>Videos que me gustan</span>
+                     <i class="fas fa-thumbs-up"></i>
+                    <span class="text-full">Videos que me gustan</span>
+                     <span class="text-mini">Me gusta</span>
                 </a>
             </li>
         </ul>

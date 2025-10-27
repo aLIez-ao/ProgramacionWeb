@@ -33,6 +33,11 @@ a {
   margin-left: 240px;
   padding: 24px;
   overflow-y: auto; /* Permite scroll solo en esta área */
+  transition: margin-left 0.2s ease-in-out;
+}
+
+body.sidebar-minimized .content-area {
+  margin-left: 72px; /* Ancho de la sidebar minimizada */
 }
 
 /* --- Rejilla de Videos (Pertenece a la página de Inicio) --- */

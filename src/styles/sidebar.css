@@ -1,42 +1,127 @@
+/* --- Estilos Normales de la Sidebar --- */
 .sidebar {
-  width: 240px;
+  width: 240px; /* Ancho normal */
   background-color: white;
   padding-top: 12px;
   position: fixed;
-  top: 60px; /* Debajo del header */
+  top: 60px;
   left: 0;
   height: calc(100vh - 60px);
   overflow-y: auto;
   z-index: 900;
+  transition: width 0.2s ease-in-out; /* Transición suave */
 }
+
 .sidebar nav ul {
   list-style: none;
 }
+
 .sidebar nav li a {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 20px; /* Espacio entre icono y texto */
   padding: 10px 24px;
   color: #0f0f0f;
   font-size: 14px;
   font-weight: 500;
   border-radius: 10px;
   margin: 0 12px;
+  white-space: nowrap; /* Evita que el texto salte de línea */
 }
+
 .sidebar nav li a:hover {
   background-color: #f2f2f2;
 }
+
 .sidebar nav li a.active {
   background-color: #eee;
   font-weight: bold;
 }
+
 .sidebar nav li a i {
   width: 24px;
   text-align: center;
   font-size: 18px;
+  flex-shrink: 0; /* Evita que el icono se encoja */
 }
+
+.sidebar nav li a span {
+  opacity: 1;
+  transition: opacity 0.1s ease-in-out;
+}
+
 .sidebar hr {
   border: 0;
   border-top: 1px solid #eee;
   margin: 16px 0;
+  transition: margin 0.2s ease-in-out;
+}
+
+
+/* --- Estilos para la Sidebar Minimizada --- */
+
+/* 1. ESTADO MINIMIZADO: Cuando body.sidebar-minimized está activo */
+body.sidebar-minimized .sidebar {
+  width: 72px; /* Ancho solo para los iconos */
+}
+
+/* 2. CAMBIO DE LAYOUT EN EL ENLACE (Botón) */
+body.sidebar-minimized .sidebar nav li a {
+  flex-direction: column; /* Apila icono y texto verticalmente */
+  justify-content: center; /* Centra todo verticalmente */
+  align-items: center; /* Centra todo horizontalmente */
+  padding: 14px 0; /* Padding vertical, sin padding horizontal */
+  gap: 6px; /* Espacio pequeño entre icono y texto */
+  margin: 0; /* Sin margen */
+  border-radius: 0; /* Sin bordes redondeados en el botón */
+}
+
+/* 3. CAMBIO DE ESTILO DEL TEXTO (span) */
+body.sidebar-minimized .sidebar nav li a span {
+  font-size: 10px; /* Texto más pequeño */
+  opacity: 1; /* El texto SÍ se muestra */
+  width: auto; /* Ancho automático */
+  overflow: visible; /* Asegura que se vea */
+}
+
+/* 4. CAMBIO DE ESTILO DEL ICONO (i) */
+body.sidebar-minimized .sidebar nav li a i {
+  width: auto; /* Ancho automático */
+  font-size: 20px; /* Icono un poco más grande */
+}
+
+body.sidebar-minimized .sidebar nav li a:hover {
+  background-color: #f2f2f2;
+  border-radius: 10px; /* Añade borde redondeado SOLO en hover */
+  margin: 0 4px; /* Margen para que el hover no toque los bordes */
+}
+
+body.sidebar-minimized .sidebar nav li a.active {
+  background-color: #eee;
+  border-radius: 10px;
+  margin: 0 4px;
+}
+
+body.sidebar-minimized .sidebar hr {
+  margin: 16px 8px;
+}
+
+/* --- Lógica para texto largo/corto --- */
+
+/* 1. Por defecto:
+   - Ocultamos el texto corto (.text-mini)
+*/
+.sidebar nav li a .text-mini {
+  display: none;
+}
+
+/* 2. Cuando está minimizada:
+   - Ocultamos el texto largo (.text-full)
+   - Mostramos el texto corto (.text-mini)
+*/
+body.sidebar-minimized .sidebar nav li a .text-full {
+  display: none;
+}
+body.sidebar-minimized .sidebar nav li a .text-mini {
+  display: inline; /* 'inline' funciona bien con el estilo de 10px */
 }
