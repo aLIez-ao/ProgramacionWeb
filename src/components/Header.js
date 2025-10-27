@@ -41,15 +41,23 @@ export function Header(user) {
     `;
   }
 
-  // Plantilla HTML (sin cambios)
+  // Plantilla HTML
   headerEl.innerHTML = `
     <div class="header-left">
         <i class="fas fa-bars menu-icon"></i> <a href="/" class="logo"> <i class="fab fa-youtube"></i>
             <span>${siteName}</span>
         </a>
     </div>
+    
     <div class="header-center">
-        </div>
+        <form class="search-bar" action="#">
+            <input type="text" placeholder="Buscar">
+            <button type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+
     <div class="header-right auth-section">
         ${authHtml}
     </div>
@@ -57,7 +65,7 @@ export function Header(user) {
 
   // --- LÓGICA DE JAVASCRIPT ---
 
-  // 1. Lógica del menú desplegable (sin cambios)
+  //  Lógica del menú desplegable
   if (user) {
     const avatarButton = headerEl.querySelector(".user-avatar");
     const dropdown = headerEl.querySelector("#user-dropdown");
@@ -73,10 +81,9 @@ export function Header(user) {
     });
   }
 
-  // 2. ¡NUEVA LÓGICA! Para minimizar la barra lateral
+  // Lógica para minimizar la barra lateral
   const menuIcon = headerEl.querySelector(".menu-icon");
   menuIcon.addEventListener("click", () => {
-    // Añade o quita la clase 'sidebar-minimized' del <body>
     document.body.classList.toggle("sidebar-minimized");
   });
 
