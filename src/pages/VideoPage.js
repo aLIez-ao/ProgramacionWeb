@@ -15,6 +15,8 @@ import {
   query,
   where,
   orderBy,
+  updateDoc, // <-- ¡NUEVO! Para actualizar contadores
+  increment, // <-- ¡NUEVO!
 } from "firebase/firestore";
 
 // --- FUNCIÓN PRINCIPAL DE LA PÁGINA ---
@@ -22,11 +24,11 @@ export async function VideoPage(user) {
   const params = new URLSearchParams(window.location.search);
   const videoId = params.get("v");
   const userId = user ? user.uid : null;
+  const userInitial = user ? user.email.charAt(0).toUpperCase() : "?";
 
   const pageContainer = document.createElement("div");
   pageContainer.classList.add("watch-layout");
 
-  // --- OBTENER DATOS DEL VIDEO ---
   const videoRef = doc(db, "videos", videoId);
   const videoSnap = await getDoc(videoRef);
 
@@ -36,97 +38,39 @@ export async function VideoPage(user) {
   }
   const videoData = videoSnap.data();
 
-  // --- DEFINIR INICIAL DEL USUARIO ---
-  const userInitial = user ? user.email.charAt(0).toUpperCase() : "?";
-
   // --- RENDERIZADO DE LA PLANTILLA ---
+  // Pasamos la inicial del usuario para la caja de "Añadir comentario"
   pageContainer.innerHTML = VideoPageTemplate(videoData, userInitial);
 
-  // --- LÓGICA DE LIKE/SUSCRIBIRSE ---
+  // --- INICIALIZACIÓN DE SECCIONES ---
   setupVideoActions(pageContainer, user, videoId, videoData.channel);
-
-  // --- LÓGICA DE COMENTARIOS ---
-  setupCommentSection(pageContainer, user, videoId);
-
-  // --- LÓGICA DE VIDEOS RELACIONADOS ---
+  // Pasamos la inicial del usuario para las cajas de "Respuesta"
+  setupCommentSection(pageContainer, user, videoId, userInitial);
   setupRelatedVideos(pageContainer, videoId);
 
   return pageContainer;
 }
 
 // ===================================================================
-// --- FUNCIÓN PARA LIKES/SUSCRIBIRSE ---
+// --- FUNCIÓN PARA LÓGICA DE LIKE/SUSCRIBIRSE AL VIDEO ---
+// (Esta función no tiene cambios)
+// ===================================================================
 async function setupVideoActions(pageContainer, user, videoId, channelName) {
-  const likeButton = pageContainer.querySelector(
-    ".action-buttons button:nth-child(1)"
-  );
-  const dislikeButton = pageContainer.querySelector(
-    ".action-buttons button:nth-child(2)"
-  );
-  const subscribeButton = pageContainer.querySelector(".subscribe-button");
-  const userId = user ? user.uid : null;
-
-  function updateLikeButton(liked) {
-    liked
-      ? likeButton.classList.add("active")
-      : likeButton.classList.remove("active");
-  }
-  function updateDislikeButton(disliked) {
-    disliked
-      ? dislikeButton.classList.add("active")
-      : dislikeButton.classList.remove("active");
-  }
-  function updateSubscribeButton(subscribed) {
-    if (subscribed) {
-      subscribeButton.classList.add("subscribed");
-      subscribeButton.textContent = "Suscrito";
-    } else {
-      subscribeButton.classList.remove("subscribed");
-      subscribeButton.textContent = "Suscribirse";
-    }
-  }
-
-  if (userId) {
-    const userVideoId = `${userId}_${videoId}`;
-    const subId = `${userId}_${channelName}`;
-    const likeRef = doc(db, "likes", userVideoId);
-    const dislikeRef = doc(db, "dislikes", userVideoId);
-    const subRef = doc(db, "subscriptions", subId);
-
-    const [likeSnap, dislikeSnap, subSnap] = await Promise.all([
-      getDoc(likeRef),
-      getDoc(dislikeRef),
-      getDoc(subRef),
-    ]);
-
-    let isLiked = likeSnap.exists();
-    let isDisliked = dislikeSnap.exists();
-    let isSubscribed = subSnap.exists();
-
-    updateLikeButton(isLiked);
-    updateDislikeButton(isDisliked);
-    updateSubscribeButton(isSubscribed);
-
-    likeButton.addEventListener("click", async () => {
-      // Lógica de like/unlike
-    });
-    dislikeButton.addEventListener("click", async () => {
-      // Lógica de dislike/undislike
-    });
-    subscribeButton.addEventListener("click", async () => {
-      // Lógica de suscribir/desuscribir
-    });
-  } else {
-    const authRequired = () => alert("Debes iniciar sesión para hacer esto.");
-    likeButton.addEventListener("click", authRequired);
-    dislikeButton.addEventListener("click", authRequired);
-    subscribeButton.addEventListener("click", authRequired);
-  }
+  // ... (toda tu lógica de likes/dislikes/suscripción del video va aquí)
 }
 
 // ===================================================================
-// --- FUNCIÓN DE COMENTARIOS ---
-async function setupCommentSection(pageContainer, user, videoId) {
+// --- FUNCIÓN PARA CARGAR VIDEOS RELACIONADOS ---
+// (Esta función no tiene cambios)
+// ===================================================================
+async function setupRelatedVideos(pageContainer, videoId) {
+  // ... (toda tu lógica de videos relacionados va aquí)
+}
+
+// ===================================================================
+// --- ¡NUEVA SECCIÓN DE LÓGICA DE COMENTARIOS (ACTUALIZADA)! ---
+// ===================================================================
+async function setupCommentSection(pageContainer, user, videoId, userInitial) {
   const commentInput = pageContainer.querySelector("#comment-input");
   const addCommentButton = pageContainer.querySelector("#add-comment-button");
   const commentsContainer = pageContainer.querySelector("#comments-container");
@@ -135,52 +79,85 @@ async function setupCommentSection(pageContainer, user, videoId) {
 
   const userId = user ? user.uid : null;
   const userEmail = user ? user.email : null;
+  let currentSort = "createdAt"; // Estado para saber el orden
 
+  // Habilitar/Deshabilitar el botón de comentar
   if (userId) {
     commentInput.addEventListener("input", () => {
-      if (commentInput.value.trim().length > 0) {
-        addCommentButton.classList.add("enabled");
-      } else {
-        addCommentButton.classList.remove("enabled");
-      }
+      addCommentButton.classList.toggle(
+        "enabled",
+        commentInput.value.trim().length > 0
+      );
     });
   } else {
     commentInput.placeholder = "Inicia sesión para añadir un comentario.";
     commentInput.disabled = true;
+    addCommentButton.style.display = "none";
   }
 
-  addCommentButton.addEventListener("click", async () => {
-    if (!userId || !addCommentButton.classList.contains("enabled")) return;
-    const text = commentInput.value;
+  // --- FUNCIÓN PARA PUBLICAR UN COMENTARIO (Padre o Respuesta) ---
+  async function postComment(text, parentId = null) {
+    if (!userId) return;
+
     try {
+      // 1. Añadimos el nuevo comentario
       await addDoc(collection(db, "comments"), {
         videoId: videoId,
         userId: userId,
         userEmail: userEmail,
         text: text,
+        parentId: parentId, // <-- Será 'null' para padres, o un ID para respuestas
         createdAt: serverTimestamp(),
         likeCount: 0,
         dislikeCount: 0,
-        replyCount: 0,
+        replyCount: 0, // Las respuestas siempre empiezan con 0
       });
-      commentInput.value = "";
-      addCommentButton.classList.remove("enabled");
-      fetchComments("createdAt");
+
+      // 2. Si es una respuesta, actualizamos el contador del padre
+      if (parentId) {
+        const parentRef = doc(db, "comments", parentId);
+        await updateDoc(parentRef, {
+          replyCount: increment(1),
+        });
+        // Forzar la recarga de las respuestas para ese comentario
+        const repliesContainer = commentsContainer.querySelector(
+          `.replies-container[data-parent-id="${parentId}"]`
+        );
+        if (repliesContainer)
+          await fetchAndShowReplies(parentId, repliesContainer);
+      } else {
+        // 3. Si es un comentario padre, recargamos la lista principal
+        fetchComments(currentSort);
+      }
     } catch (error) {
       console.error("Error al añadir comentario:", error);
     }
+  }
+
+  // --- Event Listener para el botón principal de Comentar ---
+  addCommentButton.addEventListener("click", async () => {
+    if (addCommentButton.classList.contains("enabled")) {
+      await postComment(commentInput.value, null);
+      commentInput.value = "";
+      addCommentButton.classList.remove("enabled");
+    }
   });
 
-  // --- FUNCIÓN PARA CARGAR COMENTARIOS ---
+  // --- FUNCIÓN PARA CARGAR COMENTARIOS "PADRE" ---
   async function fetchComments(orderByField) {
+    currentSort = orderByField; // Guardar el estado del orden
     commentsContainer.innerHTML = "Cargando comentarios...";
+
+    // 1. Consulta solo por comentarios "padre" (parentId == null)
     const q = query(
       collection(db, "comments"),
       where("videoId", "==", videoId),
+      where("parentId", "==", null), // <-- ¡CLAVE!
       orderBy(orderByField, "desc")
     );
+
     const querySnapshot = await getDocs(q);
-    commentsContainer.innerHTML = "";
+    commentsContainer.innerHTML = ""; // Limpiamos el "Cargando..."
 
     if (querySnapshot.empty) {
       commentsContainer.innerHTML =
@@ -188,65 +165,31 @@ async function setupCommentSection(pageContainer, user, videoId) {
       return;
     }
 
-    // --- Renderizamos cada comentario (ACTUALIZADO) ---
+    // 3. Renderizamos cada comentario padre
     querySnapshot.forEach((doc) => {
       const commentData = doc.data();
       const commentId = doc.id;
-
-      // Renderiza y añade el comentario
-      const commentElement = renderComment(commentData, commentId);
+      // Pasamos 'isReply = false'
+      const commentElement = renderComment(commentData, commentId, false);
       commentsContainer.appendChild(commentElement);
-
-      // --- Lógica de "Leer más" / "Mostrar menos" ---
-      const textElement = commentElement.querySelector(".comment-text");
-      const detailsContainer = commentElement.querySelector(".comment-details");
-
-      const isOverflowing = textElement.scrollHeight > textElement.clientHeight;
-      const hasLineBreaks = commentData.text.includes("\n");
-
-      if (isOverflowing || hasLineBreaks) {
-        const toggleBtn = document.createElement("button");
-        toggleBtn.className = "show-more-btn";
-        let isExpanded = false;
-
-        if (hasLineBreaks && !isOverflowing) {
-          isExpanded = true;
-          toggleBtn.textContent = "Mostrar menos";
-        } else {
-          isExpanded = false;
-          toggleBtn.textContent = "Leer más";
-        }
-
-        detailsContainer.insertBefore(toggleBtn, textElement.nextSibling);
-
-        toggleBtn.addEventListener("click", () => {
-          isExpanded = !isExpanded;
-          if (isExpanded) {
-            textElement.classList.remove("truncated");
-            toggleBtn.textContent = "Mostrar menos";
-          } else {
-            textElement.classList.add("truncated");
-            toggleBtn.textContent = "Leer más";
-          }
-        });
-      }
     });
   }
 
-  function renderComment(commentData, commentId) {
+  // --- FUNCIÓN PARA "PINTAR" UN SOLO COMENTARIO (Padre o Respuesta) ---
+  function renderComment(commentData, commentId, isReply) {
     const commentDiv = document.createElement("div");
     commentDiv.classList.add("comment-thread");
 
     const authorInitial = commentData.userEmail
       ? commentData.userEmail.charAt(0).toUpperCase()
       : "?";
+    const authorName = commentData.userEmail.split("@")[0];
 
+    // ¡HTML actualizado para incluir contenedores de respuesta!
     commentDiv.innerHTML = `
       <div class="comment-avatar">${authorInitial}</div>
       <div class="comment-details">
-        <span class="comment-author">@${
-          commentData.userEmail.split("@")[0]
-        }</span>
+        <span class="comment-author">@${authorName}</span>
         <p class="comment-text truncated">${commentData.text}</p>
         <div class="comment-actions">
           <button class="like-comment-btn" data-id="${commentId}">
@@ -256,53 +199,154 @@ async function setupCommentSection(pageContainer, user, videoId) {
           <button class="dislike-comment-btn" data-id="${commentId}">
             <i class="fas fa-thumbs-down"></i>
           </button>
-          <button class="reply-button" data-id="${commentId}">Responder</button>
+          
+          ${
+            !isReply
+              ? `<button class="reply-button" data-id="${commentId}">Responder</button>`
+              : ""
+          }
         </div>
+
+        <div class="add-reply-container"></div>
+        
+        ${
+          commentData.replyCount > 0
+            ? `
+          <button class="view-replies-btn" data-id="${commentId}">
+            Ver ${commentData.replyCount} respuestas
+          </button>
+        `
+            : ""
+        }
+        <div class="replies-container" data-parent-id="${commentId}"></div>
+
       </div>
     `;
+
+    // --- Lógica de "Leer más" (sin cambios) ---
+    const textElement = commentDiv.querySelector(".comment-text");
+    const detailsContainer = commentDiv.querySelector(".comment-details");
+    // ... (copia y pega tu lógica de "Leer más" / "Mostrar menos" aquí)
+
     return commentDiv;
   }
 
+  // --- FUNCIÓN PARA MOSTRAR LA CAJA DE RESPUESTA ---
+  function showReplyInput(parentId, container) {
+    // Si ya hay una caja de respuesta, la borramos para evitar duplicados
+    const existingBox = container.querySelector(".add-reply-box");
+    if (existingBox) {
+      existingBox.remove();
+      return; // Cierra la caja si se vuelve a hacer clic
+    }
+
+    const replyBox = document.createElement("div");
+    replyBox.classList.add("add-reply-box");
+    replyBox.innerHTML = `
+      <div class="comment-avatar">${userInitial}</div>
+      <textarea placeholder="Añade una respuesta..."></textarea>
+      <button>Responder</button>
+    `;
+
+    // Lógica del botón de respuesta
+    const replyButton = replyBox.querySelector("button");
+    const replyText = replyBox.querySelector("textarea");
+
+    replyButton.addEventListener("click", async () => {
+      const text = replyText.value;
+      if (text.trim().length > 0) {
+        await postComment(text, parentId);
+        replyBox.remove(); // Opcional: ocultar la caja después de responder
+      }
+    });
+
+    container.appendChild(replyBox);
+  }
+
+  // --- FUNCIÓN PARA CARGAR Y MOSTRAR RESPUESTAS ---
+  async function fetchAndShowReplies(parentId, container) {
+    if (container.children.length > 0) {
+      // Si ya hay respuestas, las ocultamos
+      container.innerHTML = "";
+      return;
+    }
+
+    const q = query(
+      collection(db, "comments"),
+      where("parentId", "==", parentId),
+      orderBy("createdAt", "asc") // Las respuestas se ordenan de más antigua a más nueva
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      container.innerHTML = "<p>Error: No se encontraron respuestas.</p>";
+      return;
+    }
+
+    querySnapshot.forEach((doc) => {
+      // Renderizamos la respuesta usando la misma función,
+      // pero marcándola como 'isReply = true'
+      const replyElement = renderComment(doc.data(), doc.id, true);
+      container.appendChild(replyElement);
+    });
+  }
+
+  // --- LÓGICA DE ORDENAR (sin cambios) ---
   sortNewestBtn.addEventListener("click", () => {
     sortNewestBtn.classList.add("sort-active");
     sortTopBtn.classList.remove("sort-active");
     fetchComments("createdAt");
   });
-
   sortTopBtn.addEventListener("click", () => {
     sortTopBtn.classList.add("sort-active");
     sortNewestBtn.classList.remove("sort-active");
     fetchComments("likeCount");
   });
 
+  // --- DELEGACIÓN DE EVENTOS (ACTUALIZADA) ---
   commentsContainer.addEventListener("click", async (e) => {
-    if (!userId) {
-      alert("Debes iniciar sesión para valorar comentarios.");
-      return;
+    // 1. Lógica de "Responder"
+    const replyBtn = e.target.closest(".reply-button");
+    if (replyBtn) {
+      if (!userId) {
+        alert("Debes iniciar sesión para responder.");
+        return;
+      }
+      const commentId = replyBtn.dataset.id;
+      const replyContainer = e.target
+        .closest(".comment-details")
+        .querySelector(".add-reply-container");
+      showReplyInput(commentId, replyContainer);
     }
+
+    // 2. Lógica de "Ver Respuestas"
+    const viewRepliesBtn = e.target.closest(".view-replies-btn");
+    if (viewRepliesBtn) {
+      const commentId = viewRepliesBtn.dataset.id;
+      const repliesContainer = e.target
+        .closest(".comment-details")
+        .querySelector(".replies-container");
+      await fetchAndShowReplies(commentId, repliesContainer);
+      // Alternar texto
+      const currentText = viewRepliesBtn.textContent.trim();
+      viewRepliesBtn.textContent = currentText.startsWith("Ver")
+        ? "Ocultar respuestas"
+        : `Ver ${currentText.split(" ")[1]} respuestas`;
+    }
+
+    // 3. Lógica de "Like/Dislike de Comentario" (sin cambios)
     const likeBtn = e.target.closest(".like-comment-btn");
     const dislikeBtn = e.target.closest(".dislike-comment-btn");
-    if (!likeBtn && !dislikeBtn) return;
-    const commentId = likeBtn ? likeBtn.dataset.id : dislikeBtn.dataset.id;
-    const type = likeBtn ? "like" : "dislike";
-    alert(
-      `Has hecho clic en ${type} en el comentario ${commentId}. (Lógica pendiente)`
-    );
-  });
-
-  fetchComments("createdAt");
-}
-
-// ===================================================================
-// --- FUNCIÓN PARA VIDEOS RELACIONADOS ---
-async function setupRelatedVideos(pageContainer, videoId) {
-  const relatedVideosList = pageContainer.querySelector(".secondary-column");
-  const videosCollection = collection(db, "videos");
-  const videosSnapshot = await getDocs(videosCollection);
-  videosSnapshot.forEach((doc) => {
-    const relatedVideoData = doc.data();
-    if (relatedVideoData.id !== videoId) {
-      relatedVideosList.appendChild(VideoCard(relatedVideoData));
+    if (likeBtn || dislikeBtn) {
+      if (!userId) {
+        alert("Debes iniciar sesión para valorar comentarios.");
+        return;
+      }
+      // ... (tu lógica de like/dislike de comentarios va aquí)
     }
   });
+
+  // --- Carga inicial de comentarios ---
+  fetchComments("createdAt");
 }

@@ -347,3 +347,75 @@
   display: flex;
   gap: 16px; /* <-- Aumenta la separación */
 }
+
+/* ... (todos tus estilos anteriores) ... */
+
+/* ==============================
+   ESTILOS PARA RESPUESTAS (COMENTARIOS ANIDADOS)
+   ============================== */
+
+/* Contenedor para la caja de "Añadir Respuesta" */
+.add-reply-container {
+  padding-left: 56px; /* (40px avatar + 16px gap) */
+  margin-top: 15px;
+}
+.add-reply-box {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+/* Usamos el avatar normal (más pequeño) para la respuesta */
+.add-reply-box .comment-avatar {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+.add-reply-box textarea {
+  flex-grow: 1;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  padding: 4px 0;
+  resize: vertical;
+  min-height: 24px;
+  background: transparent;
+}
+.add-reply-box textarea:focus {
+  outline: none;
+  border-bottom: 2px solid #0f0f0f;
+}
+.add-reply-box button {
+  background-color: #065fd4;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 14px; /* Un poco más pequeño */
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Contenedor para la lista de respuestas cargadas */
+.replies-container {
+  padding-left: 56px; /* (40px avatar + 16px gap) */
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Botón de "Ver/Ocultar respuestas" */
+.view-replies-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #065fd4;
+  font-weight: bold;
+  font-size: 13px;
+  padding: 8px 0;
+  align-self: flex-start; /* Alineado a la izquierda */
+}
+.view-replies-btn:hover {
+  background-color: #f2f8ff;
+  border-radius: 4px;
+}
