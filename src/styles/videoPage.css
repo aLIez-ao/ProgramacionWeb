@@ -267,6 +267,7 @@
 }
 .comment-text {
   font-size: 14px;
+  white-space: pre-line;
 }
 .comment-actions {
   display: flex;
@@ -294,6 +295,31 @@
 }
 .comment-actions .reply-button:hover {
   background-color: #f2f2f2;
+}
+
+.comment-text.truncated {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  /* Define el número de líneas a mostrar */
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+  /* Asegúrate de que pre-line siga funcionando */
+  white-space: pre-line;
+}
+
+.show-more-btn {
+  background: none;
+  border: none;
+  color: #606060;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 8px 0 0 0;
+  align-self: flex-start;
+}
+.show-more-btn:hover {
+  color: #0f0f0f;
 }
 
 /* ========================================

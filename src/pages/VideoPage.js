@@ -171,6 +171,7 @@ async function setupCommentSection(pageContainer, user, videoId) {
     }
   });
 
+  // --- FUNCIÓN PARA CARGAR COMENTARIOS ---
   async function fetchComments(orderByField) {
     commentsContainer.innerHTML = "Cargando comentarios...";
     const q = query(
@@ -180,15 +181,55 @@ async function setupCommentSection(pageContainer, user, videoId) {
     );
     const querySnapshot = await getDocs(q);
     commentsContainer.innerHTML = "";
+
     if (querySnapshot.empty) {
       commentsContainer.innerHTML =
         "<p>Aún no hay comentarios. ¡Sé el primero!</p>";
       return;
     }
+
+    // --- Renderizamos cada comentario (ACTUALIZADO) ---
     querySnapshot.forEach((doc) => {
       const commentData = doc.data();
       const commentId = doc.id;
-      commentsContainer.appendChild(renderComment(commentData, commentId));
+
+      // Renderiza y añade el comentario
+      const commentElement = renderComment(commentData, commentId);
+      commentsContainer.appendChild(commentElement);
+
+      // --- Lógica de "Leer más" / "Mostrar menos" ---
+      const textElement = commentElement.querySelector(".comment-text");
+      const detailsContainer = commentElement.querySelector(".comment-details");
+
+      const isOverflowing = textElement.scrollHeight > textElement.clientHeight;
+      const hasLineBreaks = commentData.text.includes("\n");
+
+      if (isOverflowing || hasLineBreaks) {
+        const toggleBtn = document.createElement("button");
+        toggleBtn.className = "show-more-btn";
+        let isExpanded = false;
+
+        if (hasLineBreaks && !isOverflowing) {
+          isExpanded = true;
+          toggleBtn.textContent = "Mostrar menos";
+        } else {
+          isExpanded = false;
+          toggleBtn.textContent = "Leer más";
+        }
+
+        detailsContainer.insertBefore(toggleBtn, textElement.nextSibling);
+
+        toggleBtn.addEventListener("click", () => {
+          isExpanded = !isExpanded;
+          if (isExpanded) {
+            textElement.classList.remove("truncated");
+            toggleBtn.textContent = "Mostrar menos";
+          } else {
+            textElement.classList.add("truncated");
+            toggleBtn.textContent = "Leer más";
+          }
+        });
+      }
     });
   }
 
@@ -206,7 +247,7 @@ async function setupCommentSection(pageContainer, user, videoId) {
         <span class="comment-author">@${
           commentData.userEmail.split("@")[0]
         }</span>
-        <p class="comment-text">${commentData.text}</p>
+        <p class="comment-text truncated">${commentData.text}</p>
         <div class="comment-actions">
           <button class="like-comment-btn" data-id="${commentId}">
             <i class="fas fa-thumbs-up"></i>
@@ -234,7 +275,6 @@ async function setupCommentSection(pageContainer, user, videoId) {
     fetchComments("likeCount");
   });
 
-  // Delegación para like/dislike de comentarios
   commentsContainer.addEventListener("click", async (e) => {
     if (!userId) {
       alert("Debes iniciar sesión para valorar comentarios.");
