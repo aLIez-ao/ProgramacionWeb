@@ -1,6 +1,5 @@
 // src/pages/VideoPage.template.js
 
-// Esta función recibe los datos del video y devuelve el HTML
 export function VideoPageTemplate(videoData) {
   return `
     <div class="primary-column">
@@ -30,8 +29,24 @@ export function VideoPageTemplate(videoData) {
       </div>
 
       <div class="comments-section">
-        <h2>Comentarios</h2>
-        <p>Los comentarios se cargarían aquí...</p>
+        
+        <div class="comments-header">
+          <h2>Comentarios</h2>
+          <div class="sort-buttons">
+            <button id="sort-by-newest" class="sort-active">Más recientes</button>
+            <button id="sort-by-top">Más relevantes</button>
+          </div>
+        </div>
+
+        <div class="add-comment-box">
+          <div class="channel-avatar-lg"></div>
+          <textarea id="comment-input" placeholder="Añade un comentario..."></textarea>
+          <button id="add-comment-button">Comentar</button>
+        </div>
+
+        <div id="comments-container">
+          </div>
+
       </div>
 
     </div>

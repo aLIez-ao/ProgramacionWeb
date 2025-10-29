@@ -179,3 +179,119 @@
 .subscribe-button.subscribed:hover {
   background-color: #e5e5e5;
 }
+
+/* ==============================
+   COMMENTS SECTION (ACTUALIZADO)
+   ============================== */
+.comments-section {
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.comments-header {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.sort-buttons button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #606060;
+  cursor: pointer;
+  padding-bottom: 4px;
+}
+.sort-buttons button.sort-active {
+  color: #0f0f0f;
+  border-bottom: 2px solid #0f0f0f;
+}
+
+.add-comment-box {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.add-comment-box textarea {
+  flex-grow: 1;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  padding: 4px 0;
+  resize: vertical;
+  min-height: 24px;
+  background: transparent;
+}
+.add-comment-box textarea:focus {
+  outline: none;
+  border-bottom: 2px solid #0f0f0f;
+}
+.add-comment-box button {
+  background-color: #065fd4;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0.5; /* Deshabilitado por defecto */
+}
+.add-comment-box button.enabled {
+  opacity: 1; /* Habilitado cuando hay texto */
+}
+
+#comments-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.comment-thread {
+  display: flex;
+  gap: 16px;
+}
+
+.comment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.comment-author {
+  font-weight: 600;
+  font-size: 13px;
+}
+.comment-text {
+  font-size: 14px;
+}
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+.comment-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #606060;
+  font-size: 13px;
+}
+.comment-actions button.active {
+  color: #065fd4;
+}
+.comment-actions .reply-button {
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 6px 12px;
+}
+.comment-actions .reply-button:hover {
+  background-color: #f2f2f2;
+}
