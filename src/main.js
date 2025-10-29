@@ -10,10 +10,10 @@ const appElement = document.getElementById("app");
 let contentArea;
 
 // --- Función Router ---
-function router() {
+async function router() {
+  // <-- AÑADIDO 'async'
   if (!contentArea) return;
 
-  // Limpiar clases de estado anteriores
   document.body.classList.remove(
     "page-home",
     "page-watch",
@@ -24,11 +24,13 @@ function router() {
   contentArea.innerHTML = "";
 
   if (path === "/") {
-    document.body.classList.add("page-home"); // <-- CLASE DE PÁGINA
-    contentArea.appendChild(HomePage());
+    document.body.classList.add("page-home");
+    // ¡Añadimos 'await' para esperar a que HomePage() termine!
+    contentArea.appendChild(await HomePage());
   } else if (path === "/watch") {
-    document.body.classList.add("page-watch"); // <-- CLASE DE PÁGINA
-    contentArea.appendChild(VideoPage());
+    document.body.classList.add("page-watch");
+    // ¡Añadimos 'await' para esperar a que VideoPage() termine!
+    contentArea.appendChild(await VideoPage());
   } else {
     contentArea.innerHTML = "<h1>404 - Página no encontrada</h1>";
   }
