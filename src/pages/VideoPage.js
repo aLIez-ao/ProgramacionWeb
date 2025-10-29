@@ -197,30 +197,33 @@ async function setupCommentSection(pageContainer, user, videoId, userInitial) {
 
   async function postComment(text, parentId = null) {
     if (!userId) return;
+
     try {
+      // 1. Añadimos el nuevo comentario
       await addDoc(collection(db, "comments"), {
-        videoId,
-        userId,
-        userEmail,
-        text,
-        parentId,
+        videoId: videoId,
+        userId: userId,
+        userEmail: userEmail,
+        text: text,
+        parentId: parentId, // <-- 'null' para padres, ID para respuestas
         createdAt: serverTimestamp(),
         likeCount: 0,
         dislikeCount: 0,
         replyCount: 0,
       });
 
+      // 2. Si es una respuesta, actualizamos el contador del padre
       if (parentId) {
         const parentRef = doc(db, "comments", parentId);
-        await updateDoc(parentRef, { replyCount: increment(1) });
-        const repliesContainer = commentsContainer.querySelector(
-          `.replies-container[data-parent-id="${parentId}"]`
-        );
-        if (repliesContainer)
-          await fetchAndShowReplies(parentId, repliesContainer);
-      } else {
-        fetchComments(currentSort);
+        await updateDoc(parentRef, {
+          replyCount: increment(1),
+        });
       }
+
+      // 3. ¡CORRECCIÓN CLAVE!
+      // Después de CUALQUIER comentario, recarga toda la lista.
+      // Esto actualiza los contadores y mantiene todo simple.
+      await fetchComments(currentSort);
     } catch (error) {
       console.error("Error al añadir comentario:", error);
     }
@@ -257,12 +260,13 @@ async function setupCommentSection(pageContainer, user, videoId, userInitial) {
     querySnapshot.forEach((doc) => {
       const commentData = doc.data();
       const commentId = doc.id;
-      const commentElement = renderComment(commentData, commentId, false);
+      const commentElement = renderComment(commentData, commentId);
       commentsContainer.appendChild(commentElement);
     });
   }
 
-  function renderComment(commentData, commentId, isReply) {
+  // --- FUNCIÓN PARA "PINTAR" UN SOLO COMENTARIO (Padre o Respuesta) ---
+  function renderComment(commentData, commentId) {
     const commentDiv = document.createElement("div");
     commentDiv.classList.add("comment-thread");
 
@@ -271,6 +275,10 @@ async function setupCommentSection(pageContainer, user, videoId, userInitial) {
       : "?";
     const authorName = commentData.userEmail.split("@")[0];
 
+    //
+    // ¡CORRECCIÓN DE ESTRUCTURA HTML!
+    // Todos los contenedores de respuesta AHORA ESTÁN DENTRO de .comment-details
+    //
     commentDiv.innerHTML = `
       <div class="comment-avatar">${authorInitial}</div>
       <div class="comment-details">
@@ -284,38 +292,52 @@ async function setupCommentSection(pageContainer, user, videoId, userInitial) {
           <button class="dislike-comment-btn" data-id="${commentId}">
             <i class="fas fa-thumbs-down"></i>
           </button>
-          ${
-            !isReply
-              ? `<button class="reply-button" data-id="${commentId}">Responder</button>`
-              : ""
-          }
+          <button class="reply-button" data-id="${commentId}">Responder</button>
         </div>
+        
         <div class="add-reply-container"></div>
         ${
           commentData.replyCount > 0
-            ? `<button class="view-replies-btn" data-id="${commentId}">
-                Ver ${commentData.replyCount} respuestas
+            ? `<button class="view-replies-btn" data-id="${commentId}" data-reply-count="${commentData.replyCount}">
+                ${commentData.replyCount} respuestas
               </button>`
             : ""
         }
         <div class="replies-container" data-parent-id="${commentId}"></div>
+
       </div>
     `;
 
-    // --- Leer más / Mostrar menos ---
+    // --- Lógica de "Leer más" / "Mostrar menos" ---
     const textElement = commentDiv.querySelector(".comment-text");
     const detailsContainer = commentDiv.querySelector(".comment-details");
+
+    // Comprobamos las dos condiciones
     const isOverflowing = textElement.scrollHeight > textElement.clientHeight;
     const hasLineBreaks = commentData.text.includes("\n");
 
     if (isOverflowing || hasLineBreaks) {
       const toggleBtn = document.createElement("button");
       toggleBtn.className = "show-more-btn";
+
       let isExpanded = false;
 
-      toggleBtn.textContent = isOverflowing ? "Leer más" : "Mostrar menos";
+      // Lógica para el estado inicial del botón
+      if (hasLineBreaks && !isOverflowing) {
+        // Si tiene saltos de línea pero no se desborda,
+        // ya está "expandido" (pre-line), así que mostramos "Mostrar menos"
+        isExpanded = true;
+        toggleBtn.textContent = "Mostrar menos";
+      } else {
+        // Si se desborda, está truncado
+        isExpanded = false;
+        toggleBtn.textContent = "Leer más";
+      }
 
+      // Insertamos el botón después del texto
       detailsContainer.insertBefore(toggleBtn, textElement.nextSibling);
+
+      // Lógica de clic
       toggleBtn.addEventListener("click", () => {
         isExpanded = !isExpanded;
         if (isExpanded) {
@@ -380,7 +402,7 @@ async function setupCommentSection(pageContainer, user, videoId, userInitial) {
     }
 
     querySnapshot.forEach((doc) => {
-      const replyElement = renderComment(doc.data(), doc.id, true);
+      const replyElement = renderComment(doc.data(), doc.id);
       container.appendChild(replyElement);
     });
   }
@@ -417,11 +439,17 @@ async function setupCommentSection(pageContainer, user, videoId, userInitial) {
       const repliesContainer = e.target
         .closest(".comment-details")
         .querySelector(".replies-container");
-      await fetchAndShowReplies(commentId, repliesContainer);
-      const currentText = viewRepliesBtn.textContent.trim();
-      viewRepliesBtn.textContent = currentText.startsWith("Ver")
-        ? "Ocultar respuestas"
-        : `Ver ${currentText.split(" ")[1]} respuestas`;
+
+      // Alternar respuestas
+      if (repliesContainer.children.length > 0) {
+        // Ocultar respuestas
+        repliesContainer.innerHTML = "";
+        viewRepliesBtn.textContent = `${viewRepliesBtn.dataset.replyCount} respuestas`;
+      } else {
+        // Mostrar respuestas
+        await fetchAndShowReplies(commentId, repliesContainer);
+        viewRepliesBtn.textContent = "Ocultar respuestas";
+      }
     }
   });
 
