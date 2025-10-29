@@ -1,6 +1,7 @@
 // src/pages/VideoPage.template.js
 
-export function VideoPageTemplate(videoData) {
+// 1. La función ahora acepta 'userInitial'
+export function VideoPageTemplate(videoData, userInitial = "?") {
   return `
     <div class="primary-column">
       
@@ -39,13 +40,13 @@ export function VideoPageTemplate(videoData) {
         </div>
 
         <div class="add-comment-box">
-          <div class="channel-avatar-lg"></div>
+          <div class="comment-avatar">${userInitial}</div>
           <textarea id="comment-input" placeholder="Añade un comentario..."></textarea>
           <button id="add-comment-button">Comentar</button>
         </div>
 
         <div id="comments-container">
-          </div>
+        </div>
 
       </div>
 

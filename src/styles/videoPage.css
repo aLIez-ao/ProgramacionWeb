@@ -295,3 +295,29 @@
 .comment-actions .reply-button:hover {
   background-color: #f2f2f2;
 }
+
+/* ========================================
+  NUEVOS ESTILOS - Corrección de Avatares y Espaciado
+  ========================================
+*/
+
+/* 1. Nuevo estilo para los avatares en la sección de comentarios */
+.comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #065fd4; /* <-- Estilo azul (igual al header) */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  flex-shrink: 0; /* Evita que el avatar se encoja */
+}
+
+/* 2. Arreglo de espaciado para los botones de ordenar */
+.sort-buttons {
+  display: flex;
+  gap: 16px; /* <-- Aumenta la separación */
+}

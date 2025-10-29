@@ -11,15 +11,14 @@ import {
   serverTimestamp,
   collection,
   getDocs,
-  addDoc, // <-- ¡NUEVO! Para añadir comentarios
-  query, // <-- ¡NUEVO! Para ordenar/filtrar
-  where, // <-- ¡NUEVO!
-  orderBy, // <-- ¡NUEVO!
+  addDoc,
+  query,
+  where,
+  orderBy,
 } from "firebase/firestore";
 
 // --- FUNCIÓN PRINCIPAL DE LA PÁGINA ---
 export async function VideoPage(user) {
-  // --- INICIALIZACIÓN Y OBTENCIÓN DE DATOS (Sin cambios) ---
   const params = new URLSearchParams(window.location.search);
   const videoId = params.get("v");
   const userId = user ? user.uid : null;
@@ -27,6 +26,7 @@ export async function VideoPage(user) {
   const pageContainer = document.createElement("div");
   pageContainer.classList.add("watch-layout");
 
+  // --- OBTENER DATOS DEL VIDEO ---
   const videoRef = doc(db, "videos", videoId);
   const videoSnap = await getDoc(videoRef);
 
@@ -36,26 +36,26 @@ export async function VideoPage(user) {
   }
   const videoData = videoSnap.data();
 
-  // --- RENDERIZADO DE LA PLANTILLA (Sin cambios) ---
-  pageContainer.innerHTML = VideoPageTemplate(videoData);
+  // --- DEFINIR INICIAL DEL USUARIO ---
+  const userInitial = user ? user.email.charAt(0).toUpperCase() : "?";
 
-  // --- LÓGICA DE LIKES Y SUSCRIPCIONES (Sin cambios) ---
-  // (Esta sección sigue igual que antes, manejando los botones de like/sub del video)
+  // --- RENDERIZADO DE LA PLANTILLA ---
+  pageContainer.innerHTML = VideoPageTemplate(videoData, userInitial);
+
+  // --- LÓGICA DE LIKE/SUSCRIBIRSE ---
   setupVideoActions(pageContainer, user, videoId, videoData.channel);
 
-  // --- ¡NUEVA LÓGICA DE COMENTARIOS! ---
+  // --- LÓGICA DE COMENTARIOS ---
   setupCommentSection(pageContainer, user, videoId);
 
-  // --- LÓGICA DE VIDEOS RELACIONADOS (Sin cambios) ---
+  // --- LÓGICA DE VIDEOS RELACIONADOS ---
   setupRelatedVideos(pageContainer, videoId);
 
   return pageContainer;
 }
 
 // ===================================================================
-// --- FUNCIÓN PARA LÓGICA DE LIKE/SUSCRIBIRSE AL VIDEO ---
-// (Refactorizamos tu lógica anterior en esta función)
-// ===================================================================
+// --- FUNCIÓN PARA LIKES/SUSCRIBIRSE ---
 async function setupVideoActions(pageContainer, user, videoId, channelName) {
   const likeButton = pageContainer.querySelector(
     ".action-buttons button:nth-child(1)"
@@ -108,13 +108,13 @@ async function setupVideoActions(pageContainer, user, videoId, channelName) {
     updateSubscribeButton(isSubscribed);
 
     likeButton.addEventListener("click", async () => {
-      // ... (lógica de like/unlike que ya tenías)
+      // Lógica de like/unlike
     });
     dislikeButton.addEventListener("click", async () => {
-      // ... (lógica de dislike/undislike que ya tenías)
+      // Lógica de dislike/undislike
     });
     subscribeButton.addEventListener("click", async () => {
-      // ... (lógica de suscribir/desuscribir que ya tenías)
+      // Lógica de suscribir/desuscribir
     });
   } else {
     const authRequired = () => alert("Debes iniciar sesión para hacer esto.");
@@ -125,8 +125,7 @@ async function setupVideoActions(pageContainer, user, videoId, channelName) {
 }
 
 // ===================================================================
-// --- ¡NUEVA SECCIÓN DE LÓGICA DE COMENTARIOS! ---
-// ===================================================================
+// --- FUNCIÓN DE COMENTARIOS ---
 async function setupCommentSection(pageContainer, user, videoId) {
   const commentInput = pageContainer.querySelector("#comment-input");
   const addCommentButton = pageContainer.querySelector("#add-comment-button");
@@ -137,7 +136,6 @@ async function setupCommentSection(pageContainer, user, videoId) {
   const userId = user ? user.uid : null;
   const userEmail = user ? user.email : null;
 
-  // Habilitar/Deshabilitar el botón de comentar
   if (userId) {
     commentInput.addEventListener("input", () => {
       if (commentInput.value.trim().length > 0) {
@@ -151,13 +149,10 @@ async function setupCommentSection(pageContainer, user, videoId) {
     commentInput.disabled = true;
   }
 
-  // --- FUNCIÓN PARA PUBLICAR UN NUEVO COMENTARIO ---
   addCommentButton.addEventListener("click", async () => {
     if (!userId || !addCommentButton.classList.contains("enabled")) return;
-
     const text = commentInput.value;
     try {
-      // Añadimos el nuevo comentario a la colección 'comments'
       await addDoc(collection(db, "comments"), {
         videoId: videoId,
         userId: userId,
@@ -168,57 +163,45 @@ async function setupCommentSection(pageContainer, user, videoId) {
         dislikeCount: 0,
         replyCount: 0,
       });
-      // Limpiamos el input y recargamos los comentarios
       commentInput.value = "";
       addCommentButton.classList.remove("enabled");
-      fetchComments("createdAt"); // Recargar con los más nuevos
+      fetchComments("createdAt");
     } catch (error) {
       console.error("Error al añadir comentario:", error);
     }
   });
 
-  // --- FUNCIÓN PARA CARGAR COMENTARIOS ---
   async function fetchComments(orderByField) {
     commentsContainer.innerHTML = "Cargando comentarios...";
-
-    // 1. Creamos la consulta (query)
     const q = query(
       collection(db, "comments"),
-      where("videoId", "==", videoId), // Solo de este video
-      orderBy(orderByField, "desc") // Ordenados
+      where("videoId", "==", videoId),
+      orderBy(orderByField, "desc")
     );
-
-    // 2. Ejecutamos la consulta
     const querySnapshot = await getDocs(q);
-    commentsContainer.innerHTML = ""; // Limpiamos el "Cargando..."
-
+    commentsContainer.innerHTML = "";
     if (querySnapshot.empty) {
       commentsContainer.innerHTML =
         "<p>Aún no hay comentarios. ¡Sé el primero!</p>";
       return;
     }
-
-    // 3. Renderizamos cada comentario
     querySnapshot.forEach((doc) => {
       const commentData = doc.data();
       const commentId = doc.id;
-      const commentElement = renderComment(commentData, commentId);
-      commentsContainer.appendChild(commentElement);
+      commentsContainer.appendChild(renderComment(commentData, commentId));
     });
   }
 
-  // --- FUNCIÓN PARA "PINTAR" UN SOLO COMENTARIO ---
   function renderComment(commentData, commentId) {
     const commentDiv = document.createElement("div");
     commentDiv.classList.add("comment-thread");
 
-    // Obtenemos la inicial del email para el avatar
     const authorInitial = commentData.userEmail
       ? commentData.userEmail.charAt(0).toUpperCase()
       : "?";
 
     commentDiv.innerHTML = `
-      <div class="channel-avatar-lg">${authorInitial}</div>
+      <div class="comment-avatar">${authorInitial}</div>
       <div class="comment-details">
         <span class="comment-author">@${
           commentData.userEmail.split("@")[0]
@@ -239,56 +222,43 @@ async function setupCommentSection(pageContainer, user, videoId) {
     return commentDiv;
   }
 
-  // --- LÓGICA DE ORDENAR ---
   sortNewestBtn.addEventListener("click", () => {
     sortNewestBtn.classList.add("sort-active");
     sortTopBtn.classList.remove("sort-active");
-    fetchComments("createdAt"); // 'createdAt' es el campo de la fecha
+    fetchComments("createdAt");
   });
 
   sortTopBtn.addEventListener("click", () => {
     sortTopBtn.classList.add("sort-active");
     sortNewestBtn.classList.remove("sort-active");
-    fetchComments("likeCount"); // 'likeCount' es el campo de "relevancia"
+    fetchComments("likeCount");
   });
 
-  // --- LÓGICA DE LIKE/DISLIKE DE COMENTARIOS (Usando Delegación de Eventos) ---
+  // Delegación para like/dislike de comentarios
   commentsContainer.addEventListener("click", async (e) => {
     if (!userId) {
       alert("Debes iniciar sesión para valorar comentarios.");
       return;
     }
-
     const likeBtn = e.target.closest(".like-comment-btn");
     const dislikeBtn = e.target.closest(".dislike-comment-btn");
-
-    if (!likeBtn && !dislikeBtn) return; // No se hizo clic en un botón de like/dislike
-
+    if (!likeBtn && !dislikeBtn) return;
     const commentId = likeBtn ? likeBtn.dataset.id : dislikeBtn.dataset.id;
     const type = likeBtn ? "like" : "dislike";
-
-    // ¡Lógica de like/dislike mutuamente excluyente! (La omitimos por brevedad)
-    // ... esta lógica sería idéntica a la de los videos, pero
-    // usando la colección 'comment_likes' y actualizando 'likeCount'
-    // en el documento del comentario.
     alert(
       `Has hecho clic en ${type} en el comentario ${commentId}. (Lógica pendiente)`
     );
   });
 
-  // --- Carga inicial de comentarios ---
-  fetchComments("createdAt"); // Cargar comentarios por defecto
+  fetchComments("createdAt");
 }
 
 // ===================================================================
-// --- FUNCIÓN PARA CARGAR VIDEOS RELACIONADOS ---
-// (Refactorizamos tu lógica anterior en esta función)
-// ===================================================================
+// --- FUNCIÓN PARA VIDEOS RELACIONADOS ---
 async function setupRelatedVideos(pageContainer, videoId) {
   const relatedVideosList = pageContainer.querySelector(".secondary-column");
   const videosCollection = collection(db, "videos");
   const videosSnapshot = await getDocs(videosCollection);
-
   videosSnapshot.forEach((doc) => {
     const relatedVideoData = doc.data();
     if (relatedVideoData.id !== videoId) {
