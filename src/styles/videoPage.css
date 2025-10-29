@@ -159,3 +159,23 @@
 .secondary-column .video-card .video-stats {
   font-size: 12px;
 }
+
+/* Botón de Like (activo) */
+.action-buttons button.active {
+  /* YouTube usa un azul brillante para el 'like' */
+  background-color: #cce0ff;
+  color: #065fd4;
+}
+.action-buttons button.active:hover {
+  background-color: #b8d4ff;
+}
+
+/* Botón de Suscribirse (activo) */
+.subscribe-button.subscribed {
+  /* YouTube usa un gris claro cuando ya estás suscrito */
+  background-color: #f2f2f2;
+  color: #606060;
+}
+.subscribe-button.subscribed:hover {
+  background-color: #e5e5e5;
+}

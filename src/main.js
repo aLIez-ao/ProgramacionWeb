@@ -8,10 +8,10 @@ import { onAuthStateChanged } from "firebase/auth";
 
 const appElement = document.getElementById("app");
 let contentArea;
+let currentUser = null;
 
 // --- Función Router ---
 async function router() {
-  // <-- AÑADIDO 'async'
   if (!contentArea) return;
 
   document.body.classList.remove(
@@ -25,12 +25,10 @@ async function router() {
 
   if (path === "/") {
     document.body.classList.add("page-home");
-    // ¡Añadimos 'await' para esperar a que HomePage() termine!
     contentArea.appendChild(await HomePage());
   } else if (path === "/watch") {
     document.body.classList.add("page-watch");
-    // ¡Añadimos 'await' para esperar a que VideoPage() termine!
-    contentArea.appendChild(await VideoPage());
+    contentArea.appendChild(await VideoPage(currentUser));
   } else {
     contentArea.innerHTML = "<h1>404 - Página no encontrada</h1>";
   }
@@ -39,36 +37,26 @@ async function router() {
 // --- Renderizado de la App (Partes Estáticas) ---
 function renderStaticApp(user) {
   appElement.innerHTML = "";
-
-  // 1. Renderizar Header (pasándole el usuario)
   appElement.appendChild(Header(user));
-
-  // 2. ¡CAMBIO! Renderizar Sidebar como hija directa de #app
   appElement.appendChild(Sidebar());
-
-  // 3. Renderizar el layout principal (AHORA SIN LA SIDEBAR)
   const mainLayout = document.createElement("div");
   mainLayout.classList.add("main-layout");
-
   contentArea = document.createElement("main");
   contentArea.classList.add("content-area");
   mainLayout.appendChild(contentArea);
   appElement.appendChild(mainLayout);
-
-  // 4. ¡NUEVO! Añadir el overlay para el modo "watch"
   const overlay = document.createElement("div");
   overlay.classList.add("page-overlay");
-  // Añadirle un clic para que cierre el menú
   overlay.addEventListener("click", () => {
     document.body.classList.remove("sidebar-open-overlay");
   });
   appElement.appendChild(overlay);
 
-  // 5. LLAMAR AL ROUTER por primera vez
+  // router() se llama aquí y es la única vez que se debe llamar
   router();
 }
 
-// --- Interceptor de Clics (Sin cambios) ---
+// --- Interceptor de Clics ---
 document.body.addEventListener("click", (e) => {
   const link = e.target.closest("a");
   if (
@@ -83,8 +71,10 @@ document.body.addEventListener("click", (e) => {
   router();
 });
 
-// --- Puntos de Entrada (Sin cambios) ---
+// --- Puntos de Entrada ---
 onAuthStateChanged(auth, (user) => {
+  currentUser = user;
   renderStaticApp(user);
 });
+
 window.addEventListener("popstate", router);
