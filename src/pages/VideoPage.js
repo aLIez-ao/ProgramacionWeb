@@ -38,12 +38,16 @@ export async function VideoPage(user) {
 
   // 3. Obtener los elementos de los botones
   const likeButton = pageContainer.querySelector(
-    ".action-buttons button:nth-child(1)"
+    ".action-buttons button:nth-child(1)" // Botón de Like
+  );
+  // ¡NUEVO! Seleccionamos el botón de dislike
+  const dislikeButton = pageContainer.querySelector(
+    ".action-buttons button:nth-child(2)" // Botón de Dislike
   );
   const subscribeButton = pageContainer.querySelector(".subscribe-button");
 
-  const userId = user ? user.uid : null; // Obtenemos el ID del usuario (o null)
-  const channelName = videoData.channel; // Usamos el nombre del canal como su ID (para este demo)
+  const userId = user ? user.uid : null;
+  const channelName = videoData.channel;
 
   // 4. Funciones para actualizar el estilo de los botones
   function updateLikeButton(liked) {
@@ -53,7 +57,18 @@ export async function VideoPage(user) {
       likeButton.classList.remove("active");
     }
   }
+
+  // ¡NUEVO! Función para el botón de dislike
+  function updateDislikeButton(disliked) {
+    if (disliked) {
+      dislikeButton.classList.add("active");
+    } else {
+      dislikeButton.classList.remove("active");
+    }
+  }
+
   function updateSubscribeButton(subscribed) {
+    // ... (esta función no cambia)
     if (subscribed) {
       subscribeButton.classList.add("subscribed");
       subscribeButton.textContent = "Suscrito";
@@ -65,49 +80,85 @@ export async function VideoPage(user) {
 
   // 5. Comprobar el estado inicial (solo si el usuario está logueado)
   if (userId) {
-    // Definimos los IDs únicos para nuestros documentos de "relación"
-    const likeId = `${userId}_${videoId}`;
+    // ID único para la relación usuario-video
+    const userVideoId = `${userId}_${videoId}`;
     const subId = `${userId}_${channelName}`;
 
-    // Creamos las referencias a esos documentos
-    const likeRef = doc(db, "likes", likeId);
+    // Referencias a los documentos de like Y dislike
+    const likeRef = doc(db, "likes", userVideoId);
+    const dislikeRef = doc(db, "dislikes", userVideoId); // ¡NUEVO!
     const subRef = doc(db, "subscriptions", subId);
 
     // Comprobamos si ya existen
     const likeSnap = await getDoc(likeRef);
+    const dislikeSnap = await getDoc(dislikeRef); // ¡NUEVO!
     const subSnap = await getDoc(subRef);
 
     let isLiked = likeSnap.exists();
+    let isDisliked = dislikeSnap.exists(); // ¡NUEVO!
     let isSubscribed = subSnap.exists();
 
     // Actualizamos la UI con el estado inicial
     updateLikeButton(isLiked);
+    updateDislikeButton(isDisliked); // ¡NUEVO!
     updateSubscribeButton(isSubscribed);
 
     // 6. AÑADIR LOS EVENT LISTENERS
 
-    // --- Lógica de Like/Unlike ---
+    // --- Lógica de Like (Modificada para ser excluyente) ---
     likeButton.addEventListener("click", async () => {
-      isLiked = !isLiked; // Invertir el estado
-      updateLikeButton(isLiked); // Actualizar UI
-
       if (isLiked) {
-        // Si ahora está likeado, crea el documento
+        // --- El usuario está quitando su Like ---
+        isLiked = false;
+        await deleteDoc(likeRef);
+      } else {
+        // --- El usuario está dando Like ---
+        isLiked = true;
         await setDoc(likeRef, {
           userId: userId,
           videoId: videoId,
           likedAt: serverTimestamp(),
         });
-      } else {
-        // Si ya no está likeado, borra el documento
-        await deleteDoc(likeRef);
+
+        // ¡NUEVO! Si tenía dislike, se lo quitamos
+        if (isDisliked) {
+          isDisliked = false;
+          await deleteDoc(dislikeRef);
+          updateDislikeButton(false); // Actualiza la UI del dislike
+        }
       }
+      updateLikeButton(isLiked); // Actualiza la UI del like
     });
 
-    // --- Lógica de Suscribir/Desuscribir ---
+    // --- ¡NUEVO! Lógica de Dislike ---
+    dislikeButton.addEventListener("click", async () => {
+      if (isDisliked) {
+        // --- El usuario está quitando su Dislike ---
+        isDisliked = false;
+        await deleteDoc(dislikeRef);
+      } else {
+        // --- El usuario está dando Dislike ---
+        isDisliked = true;
+        await setDoc(dislikeRef, {
+          userId: userId,
+          videoId: videoId,
+          dislikedAt: serverTimestamp(),
+        });
+
+        // ¡NUEVO! Si tenía like, se lo quitamos
+        if (isLiked) {
+          isLiked = false;
+          await deleteDoc(likeRef);
+          updateLikeButton(false); // Actualiza la UI del like
+        }
+      }
+      updateDislikeButton(isDisliked); // Actualiza la UI del dislike
+    });
+
+    // --- Lógica de Suscribir (sin cambios) ---
     subscribeButton.addEventListener("click", async () => {
-      isSubscribed = !isSubscribed; // Invertir estado
-      updateSubscribeButton(isSubscribed); // Actualizar UI
+      isSubscribed = !isSubscribed;
+      updateSubscribeButton(isSubscribed);
 
       if (isSubscribed) {
         await setDoc(subRef, {
@@ -120,9 +171,10 @@ export async function VideoPage(user) {
       }
     });
   } else {
-    // Si no hay usuario, al hacer clic solo mostramos una alerta
+    // Si no hay usuario, mostramos alerta
     const authRequired = () => alert("Debes iniciar sesión para hacer esto.");
     likeButton.addEventListener("click", authRequired);
+    dislikeButton.addEventListener("click", authRequired); // ¡NUEVO!
     subscribeButton.addEventListener("click", authRequired);
   }
 
