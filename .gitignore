@@ -1,0 +1,67 @@
+# =========================
+# Archivos del sistema
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# Configuración de editores
+# =========================
+.vscode/
+.idea/
+*.code-workspace
+
+# =========================
+# Dependencias
+# =========================
+node_modules/
+vendor/
+
+# =========================
+# Archivos temporales / cachés
+# =========================
+*.log
+*.tmp
+*.swp
+*.bak
+*.sublime-workspace
+*.sublime-project
+PROJECT_STRUCTURE.md
+TODO.md
+notas.txt
+
+# =========================
+# Caché de Firebase
+# =========================
+/.firebase/
+
+# =========================
+# Compilación / build
+# =========================
+dist/
+build/
+.cache/
+.env
+.env.local
+.env.*.local
+
+# =========================
+# XAMPP / PHP
+# =========================
+/xampp/
+.htaccess
+
+# =========================
+# Archivos personales / otros
+# =========================
+*.zip
+*.rar
+*.tar
+*.gz
+*.7z
+
+# =========================
+# git
+# =========================
+#.gitignore
